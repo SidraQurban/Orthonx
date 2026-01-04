@@ -156,13 +156,12 @@ const SignUpModal = () => {
               style={{ alignItems: "center", marginTop: responsiveHeight(1) }}
             >
               <TouchableOpacity
-                onPress={() => navigation.navigate("Home")}
+                onPress={() => navigation.replace("HomeTabs")}
                 activeOpacity={0.8}
                 style={{
                   marginTop: responsiveHeight(4),
                   width: responsiveWidth(65),
                   alignSelf: "center",
-                  // Shadow for Android
                   elevation: 8,
                   borderRadius: responsiveHeight(10),
                 }}

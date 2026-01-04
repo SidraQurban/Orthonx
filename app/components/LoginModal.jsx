@@ -132,7 +132,7 @@ const LoginModal = () => {
               style={{ alignItems: "center", marginTop: responsiveHeight(1) }}
             >
               <TouchableOpacity
-                onPress={() => navigation.navigate("Home")}
+                onPress={() => navigation.replace("HomeTabs")}
                 activeOpacity={0.8}
                 style={{
                   marginTop: responsiveHeight(4),

@@ -7,6 +7,7 @@ import RoleScreen from "../screens/RoleScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import HomeScreen from "../screens/HomeScreen";
+import BottomTabsNavigator from "./BottomTabsNavigator";
 
 const Stack = createNativeStackNavigator();
 const AppNavigation = () => {
@@ -21,6 +22,7 @@ const AppNavigation = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="HomeTabs" component={BottomTabsNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -12,6 +12,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   responsiveWidth,
   responsiveHeight,
+  responsiveFontSize,
 } from "react-native-responsive-dimensions";
 
 const Drawer = createDrawerNavigator();
@@ -23,7 +24,11 @@ const DrawerNavigator = () => {
       screenOptions={({ navigation }) => ({
         headerShown: true,
         headerTitle: () => (
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Orthonx</Text>
+          <Text
+            style={{ fontSize: responsiveFontSize(2.5), fontWeight: "bold" }}
+          >
+            Orthonx
+          </Text>
         ),
         headerTitleAlign: "center",
         headerLeft: () => (
@@ -31,19 +36,30 @@ const DrawerNavigator = () => {
             onPress={() => navigation.openDrawer()}
             style={{ marginLeft: responsiveWidth(3) }}
           >
-            <Icon name="menu" size={30} color="#000" />
+            <Icon name="menu" size={30} color="#ADB5BD" />
           </TouchableOpacity>
         ),
         headerRight: () => (
           <TouchableOpacity style={{ marginRight: responsiveWidth(3) }}>
-            {/* <Image
-              source={require("../../assets/profile-pic.png")} // replace with your pic
+            <View
               style={{
-                width: responsiveHeight(4.5),
-                height: responsiveHeight(4.5),
-                borderRadius: responsiveHeight(2.25),
+                width: responsiveHeight(5),
+                height: responsiveHeight(5),
+                borderRadius: responsiveHeight(2.5),
+                backgroundColor: "#CED4DA",
+                justifyContent: "center",
+                alignItems: "center",
               }}
-            /> */}
+            >
+              <Image
+                source={require("../../assets/profile-pic.jpg")}
+                style={{
+                  width: responsiveHeight(4.5),
+                  height: responsiveHeight(4.5),
+                  borderRadius: responsiveHeight(2.25),
+                }}
+              />
+            </View>
           </TouchableOpacity>
         ),
       })}
@@ -52,7 +68,11 @@ const DrawerNavigator = () => {
           {...props}
           contentContainerStyle={{ flex: 1, padding: 20 }}
         >
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Menu</Text>
+          <Text
+            style={{ fontSize: responsiveFontSize(2.5), fontWeight: "bold" }}
+          >
+            Menu
+          </Text>
         </DrawerContentScrollView>
       )}
     >

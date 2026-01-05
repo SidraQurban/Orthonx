@@ -11,8 +11,8 @@ import { Image } from "react-native";
 import MaterialDesignIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { LinearGradient } from "expo-linear-gradient";
-const LoginModal = () => {
-  const navigation = useNavigation();
+const LoginModal = ({ navigation }) => {
+  // const navigation = useNavigation();
   const [showPassword, setShowPassword] = useState(false);
   return (
     <View>
@@ -132,7 +132,7 @@ const LoginModal = () => {
               style={{ alignItems: "center", marginTop: responsiveHeight(1) }}
             >
               <TouchableOpacity
-                onPress={() => navigation.replace("HomeTabs")}
+                onPress={() => navigation.replace("HomeDrawer")}
                 activeOpacity={0.8}
                 style={{
                   marginTop: responsiveHeight(4),

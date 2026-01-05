@@ -17,7 +17,7 @@ import { Image } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <ImageBackground
@@ -42,7 +42,7 @@ const LoginScreen = () => {
             }}
           />
         </View>
-        <LoginModal />
+        <LoginModal navigation={navigation} />
       </ImageBackground>
     </SafeAreaView>
   );

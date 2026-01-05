@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+// navigation/AppNavigation.js
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -6,10 +6,10 @@ import WelcomeScreen from "../screens/WelcomeScreen";
 import RoleScreen from "../screens/RoleScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SignUpScreen from "../screens/SignUpScreen";
-import HomeScreen from "../screens/HomeScreen";
-import BottomTabsNavigator from "./BottomTabsNavigator";
+import DrawerNavigator from "./DrawerNavigator";
 
 const Stack = createNativeStackNavigator();
+
 const AppNavigation = () => {
   return (
     <NavigationContainer>
@@ -21,8 +21,8 @@ const AppNavigation = () => {
         <Stack.Screen name="Role" component={RoleScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="HomeTabs" component={BottomTabsNavigator} />
+        {/* Once logged in, go to drawer (which contains bottom tabs) */}
+        <Stack.Screen name="HomeDrawer" component={DrawerNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

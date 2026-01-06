@@ -1,6 +1,7 @@
 import { View, Text, ImageBackground, Dimensions } from "react-native";
 import React from "react";
 import ImageSlider from "../components/ImageSlider";
+import Cards from "../components/Cards";
 
 const { width, height } = Dimensions.get("window");
 const HomeScreen = () => {
@@ -14,6 +15,7 @@ const HomeScreen = () => {
       }}
     >
       <ImageSlider />
+      <Cards />
     </ImageBackground>
   );
 };

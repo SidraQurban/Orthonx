@@ -1,14 +1,18 @@
 export const images = [
   {
-    id: 2,
+    id: 1,
     img: require("./assets/img2.jpg"),
   },
   {
-    id: 3,
+    id: 2,
     img: require("./assets/arm.png"),
   },
   {
-    id: 4,
+    id: 3,
     img: require("./assets/wrist.jpg"),
+  },
+  {
+    id: 4,
+    img: require("./assets/img1.jpg"),
   },
 ];

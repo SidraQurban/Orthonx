@@ -4,6 +4,7 @@ import ImageSlider from "../components/ImageSlider";
 import Cards from "../components/Cards";
 import Recommendations from "../components/Recommendations";
 import { FlatList } from "react-native";
+import Chatbot from "../components/Chatbot";
 
 const HomeScreen = () => {
   return (
@@ -25,6 +26,7 @@ const HomeScreen = () => {
         contentContainerStyle={{ paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
       />
+      <Chatbot />
     </ImageBackground>
   );
 };

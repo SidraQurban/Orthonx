@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import {
   responsiveHeight,
@@ -6,9 +6,11 @@ import {
 } from "react-native-responsive-dimensions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 // import {  } from "@expo/vector-icons";
 
 const Cards = () => {
+  const navigation = useNavigation();
   return (
     <View
       style={{
@@ -17,7 +19,8 @@ const Cards = () => {
       }}
     >
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Scan")}
           style={{
             height: responsiveHeight(13),
             width: responsiveWidth(45),
@@ -29,8 +32,9 @@ const Cards = () => {
         >
           <Icon name="camera" size={30} color="#ADB5BD" />
           <Text style={{ marginTop: responsiveHeight(1) }}> Scan Now</Text>
-        </View>
-        <View
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Reports")}
           style={{
             height: responsiveHeight(13),
             width: responsiveWidth(45),
@@ -42,7 +46,7 @@ const Cards = () => {
         >
           <Icon name="file-document-outline" color="#ADB5BD" size={30} />
           <Text style={{ marginTop: responsiveHeight(1) }}> My Reports</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <View
         style={{
@@ -51,7 +55,7 @@ const Cards = () => {
           marginTop: responsiveHeight(2),
         }}
       >
-        <View
+        <TouchableOpacity
           style={{
             height: responsiveHeight(13),
             width: responsiveWidth(45),
@@ -63,8 +67,8 @@ const Cards = () => {
         >
           <FontAwesome name="stethoscope" size={30} color="#ADB5BD" />
           <Text style={{ marginTop: responsiveHeight(1) }}>Consult Doctor</Text>
-        </View>
-        <View
+        </TouchableOpacity>
+        <TouchableOpacity
           style={{
             height: responsiveHeight(13),
             width: responsiveWidth(45),
@@ -76,7 +80,7 @@ const Cards = () => {
         >
           <AntDesign name="bar-chart" size={30} color="#ADB5BD" />
           <Text style={{ marginTop: responsiveHeight(1) }}>AI Insight</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

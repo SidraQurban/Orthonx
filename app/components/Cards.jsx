@@ -4,6 +4,9 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { FontAwesome, AntDesign } from "@expo/vector-icons";
+// import {  } from "@expo/vector-icons";
 
 const Cards = () => {
   return (
@@ -24,7 +27,8 @@ const Cards = () => {
             alignItems: "center",
           }}
         >
-          <Text> Scan Now</Text>
+          <Icon name="camera" size={30} color="#ADB5BD" />
+          <Text style={{ marginTop: responsiveHeight(1) }}> Scan Now</Text>
         </View>
         <View
           style={{
@@ -36,7 +40,8 @@ const Cards = () => {
             alignItems: "center",
           }}
         >
-          <Text> My Reports</Text>
+          <Icon name="file-document-outline" color="#ADB5BD" size={30} />
+          <Text style={{ marginTop: responsiveHeight(1) }}> My Reports</Text>
         </View>
       </View>
       <View
@@ -56,7 +61,8 @@ const Cards = () => {
             alignItems: "center",
           }}
         >
-          <Text> Consult Doctor</Text>
+          <FontAwesome name="stethoscope" size={30} color="#ADB5BD" />
+          <Text style={{ marginTop: responsiveHeight(1) }}>Consult Doctor</Text>
         </View>
         <View
           style={{
@@ -68,7 +74,8 @@ const Cards = () => {
             alignItems: "center",
           }}
         >
-          <Text> AI Insight</Text>
+          <AntDesign name="bar-chart" size={30} color="#ADB5BD" />
+          <Text style={{ marginTop: responsiveHeight(1) }}>AI Insight</Text>
         </View>
       </View>
     </View>

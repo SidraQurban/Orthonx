@@ -24,11 +24,16 @@ const DrawerNavigator = () => {
       screenOptions={({ navigation }) => ({
         headerShown: true,
         headerTitle: () => (
-          <Text
-            style={{ fontSize: responsiveFontSize(2.5), fontWeight: "bold" }}
-          >
-            Orthonx
-          </Text>
+          <View>
+            <Image
+              source={require("../../assets/logoapp.png")}
+              style={{
+                width: responsiveHeight(25),
+                height: responsiveHeight(4.5),
+                borderRadius: responsiveHeight(2.25),
+              }}
+            />
+          </View>
         ),
         headerTitleAlign: "center",
         headerLeft: () => (
@@ -52,7 +57,7 @@ const DrawerNavigator = () => {
               }}
             >
               <Image
-                source={require("../../assets/profile-pic.jpg")}
+                source={require("../../assets/profile-pic.png")}
                 style={{
                   width: responsiveHeight(4.5),
                   height: responsiveHeight(4.5),

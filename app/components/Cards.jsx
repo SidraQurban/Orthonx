@@ -5,7 +5,7 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { FontAwesome, AntDesign } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 // import {  } from "@expo/vector-icons";
 
@@ -31,7 +31,7 @@ const Cards = () => {
           }}
         >
           <Icon name="camera" size={30} color="#ADB5BD" />
-          <Text style={{ marginTop: responsiveHeight(1) }}> Scan Now</Text>
+          <Text style={{ marginTop: responsiveHeight(1) }}> New Diagnosis</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate("Reports")}
@@ -65,8 +65,8 @@ const Cards = () => {
             alignItems: "center",
           }}
         >
-          <FontAwesome name="stethoscope" size={30} color="#ADB5BD" />
-          <Text style={{ marginTop: responsiveHeight(1) }}>Consult Doctor</Text>
+          <MaterialIcons name="event-note" size={30} color="#ADB5BD" />
+          <Text style={{ marginTop: responsiveHeight(1) }}>Appointments</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{
@@ -78,8 +78,8 @@ const Cards = () => {
             alignItems: "center",
           }}
         >
-          <AntDesign name="bar-chart" size={30} color="#ADB5BD" />
-          <Text style={{ marginTop: responsiveHeight(1) }}>AI Insight</Text>
+          <AntDesign name="clock-circle" size={30} color="#ADB5BD" />
+          <Text style={{ marginTop: responsiveHeight(1) }}>History</Text>
         </TouchableOpacity>
       </View>
     </View>

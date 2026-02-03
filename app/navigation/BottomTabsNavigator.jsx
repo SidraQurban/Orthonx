@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/HomeScreen";
-import ScanScreen from "../screens/ScanScreen";
+import MyDiagnosis from "../screens/MyDiagnosis";
 import ReportsScreen from "../screens/ReportsScreen";
 import Profile from "../screens/Profile";
 import Settings from "../screens/Settings";
@@ -51,10 +51,10 @@ const BottomTabsNavigator = () => {
         }}
       />
 
-      {/* Scan */}
+      {/* MyDiagnosis */}
       <Tab.Screen
-        name="Scan"
-        component={ScanScreen}
+        name="MyDiagnosis"
+        component={MyDiagnosis}
         options={{
           tabBarLabel: "",
           tabBarIcon: () => (

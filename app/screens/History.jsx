@@ -3,11 +3,10 @@ import React from "react";
 import {
   responsiveFontSize,
   responsiveHeight,
-  responsiveWidth,
 } from "react-native-responsive-dimensions";
-import UploadImage from "../components/UploadImage";
+import HistoryList from "../components/HistoryList";
 
-const MyDiagnosis = () => {
+const History = () => {
   return (
     <ImageBackground
       source={require("../../assets/bgimg.png")}
@@ -17,16 +16,16 @@ const MyDiagnosis = () => {
       <View style={{ paddingHorizontal: responsiveHeight(2) }}>
         <View style={{ marginTop: responsiveHeight(1) }}>
           <Text style={{ fontSize: responsiveFontSize(2), fontWeight: "bold" }}>
-            New Diagnosis
+            Diagnosis History
           </Text>
           <Text style={{ fontSize: responsiveFontSize(1.5), color: "#6C757D" }}>
-            Upload an X-ray Image for instant AI analysis
+            View your past X-ray analysis records
           </Text>
         </View>
-        <UploadImage />
+        <HistoryList />
       </View>
     </ImageBackground>
   );
 };
 
-export default MyDiagnosis;
+export default History;

@@ -14,6 +14,16 @@ const Profile = () => {
       style={{ flex: 1 }}
       resizeMode="cover"
     >
+      <View style={{ paddingHorizontal: responsiveHeight(2) }}>
+        <View style={{ marginTop: responsiveHeight(1) }}>
+          <Text style={{ fontSize: responsiveFontSize(2), fontWeight: "bold" }}>
+            My Profile
+          </Text>
+          <Text style={{ fontSize: responsiveFontSize(1.5), color: "#6C757D" }}>
+            Manage your account settings and preferences
+          </Text>
+        </View>
+      </View>
       <View
         style={{
           height: responsiveHeight(70),

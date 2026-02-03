@@ -6,7 +6,7 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import BottomTabsNavigator from "./BottomTabsNavigator";
-import Settings from "../screens/Settings";
+import History from "../screens/History";
 import Profile from "../screens/Profile";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
@@ -83,7 +83,7 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="HomeTabs" component={BottomTabsNavigator} />
       <Drawer.Screen name="Profile" component={Profile} />
-      <Drawer.Screen name="Settings" component={Settings} />
+      <Drawer.Screen name="History" component={History} />
     </Drawer.Navigator>
   );
 };

@@ -5,10 +5,11 @@ import HomeScreen from "../screens/HomeScreen";
 import MyDiagnosis from "../screens/MyDiagnosis";
 import ReportsScreen from "../screens/ReportsScreen";
 import Profile from "../screens/Profile";
-import Settings from "../screens/Settings";
+import History from "../screens/History";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import { AntDesign } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -90,13 +91,13 @@ const BottomTabsNavigator = () => {
         }}
       />
 
-      {/* Settings */}
+      {/* History */}
       <Tab.Screen
-        name="Settings"
-        component={Settings}
+        name="History"
+        component={History}
         options={{
           tabBarIcon: ({ color }) => (
-            <Icon name="cog-outline" color={color} size={30} />
+            <AntDesign name="clock-circle" color={color} size={25} />
           ),
         }}
       />

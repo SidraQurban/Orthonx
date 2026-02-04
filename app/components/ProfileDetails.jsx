@@ -5,12 +5,11 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons";
+import { MaterialIcons, Feather } from "@expo/vector-icons";
 import MaterialDesignIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
 const ProfileDetails = () => {
-  const [showPassword, setShowPassword] = useState(false);
   return (
     <View
       style={{
@@ -21,7 +20,7 @@ const ProfileDetails = () => {
       <View style={{ marginTop: responsiveHeight(2) }}>
         <Text>Full Name</Text>
         <TextInput
-          placeholder="Sohail Ahmad"
+          placeholder="Sidra Qurban"
           style={{
             marginTop: responsiveHeight(1),
             borderWidth: 1,
@@ -47,7 +46,7 @@ const ProfileDetails = () => {
       <View style={{ marginTop: responsiveHeight(4) }}>
         <Text>Email Address</Text>
         <TextInput
-          placeholder="sohailahmad34280@gmail.com"
+          placeholder="sidraqurban34280@gmail.com"
           style={{
             marginTop: responsiveHeight(1),
             borderWidth: 1,

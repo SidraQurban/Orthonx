@@ -26,7 +26,7 @@ const Profile = () => {
       </View>
       <View
         style={{
-          height: responsiveHeight(70),
+          height: responsiveHeight(67),
           width: responsiveHeight(40),
           backgroundColor: "white",
           margin: 20,
@@ -60,7 +60,7 @@ const Profile = () => {
               fontWeight: "bold",
             }}
           >
-            sohailahmad34280
+            sidraqurban34280
           </Text>
         </View>
         <View

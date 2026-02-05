@@ -5,8 +5,8 @@ import Cards from "../components/Cards";
 import Recommendations from "../components/Recommendations";
 import { FlatList } from "react-native";
 import Chatbot from "../components/Chatbot";
-import ReportActivity from "../components/ReportActivity";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import RecentActivty from "../components/RecentActivity";
 
 const HomeScreen = () => {
   return (
@@ -19,7 +19,7 @@ const HomeScreen = () => {
         data={[1]} // dummy
         renderItem={() => (
           <View style={{ paddingTop: responsiveHeight(2) }}>
-            <ReportActivity />
+            <RecentActivty />
           </View>
         )}
         keyExtractor={(item) => item.toString()}

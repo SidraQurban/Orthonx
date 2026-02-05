@@ -13,11 +13,11 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-
-// 🔥 IMPORT DATA FROM Constant.js
 import { ReportData } from "../../Constant";
+import { useNavigation } from "@react-navigation/native";
 
-const ReportActivity = () => {
+const RecentActivty = () => {
+  const navigation = useNavigation();
   const renderItem = ({ item }) => {
     const isDetected = item.status === "Detected";
 
@@ -70,6 +70,9 @@ const ReportActivity = () => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Recent Activity</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Report")}>
+          <Text style={styles.viewAll}>View All</Text>
+        </TouchableOpacity>
       </View>
 
       {/* List */}
@@ -78,17 +81,17 @@ const ReportActivity = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        showsVerticalScrollIndicator={false} // hide scroll bar
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
 };
 
-export default ReportActivity;
+export default RecentActivty;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // 🔥 ADD THIS
+    flex: 1,
     backgroundColor: "#FFFFFF",
     marginHorizontal: responsiveWidth(4),
     borderRadius: 16,

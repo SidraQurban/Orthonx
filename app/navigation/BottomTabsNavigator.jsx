@@ -43,7 +43,7 @@ const BottomTabsNavigator = () => {
 
       {/* Reports */}
       <Tab.Screen
-        name="Report"
+        name="Reports"
         component={ReportsScreen}
         options={{
           tabBarIcon: ({ color }) => (

@@ -7,7 +7,6 @@ import {
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-// import {  } from "@expo/vector-icons";
 
 const Cards = () => {
   const navigation = useNavigation();
@@ -20,7 +19,7 @@ const Cards = () => {
     >
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Scan")}
+          onPress={() => navigation.navigate("MyDiagnosis")}
           style={{
             height: responsiveHeight(13),
             width: responsiveWidth(45),
@@ -69,6 +68,7 @@ const Cards = () => {
           <Text style={{ marginTop: responsiveHeight(1) }}>Appointments</Text>
         </TouchableOpacity>
         <TouchableOpacity
+          onPress={() => navigation.navigate("History")}
           style={{
             height: responsiveHeight(13),
             width: responsiveWidth(45),

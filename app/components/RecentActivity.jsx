@@ -70,7 +70,7 @@ const RecentActivty = () => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Recent Activity</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Report")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Reports")}>
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>

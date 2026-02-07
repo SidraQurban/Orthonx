@@ -51,7 +51,7 @@ const DoctorCards = () => {
               </Text>
               <Text
                 style={{
-                  color: "#4B9EF6",
+                  color: "#468FAF",
                   fontSize: responsiveFontSize(1.5),
                   marginTop: responsiveHeight(0.5),
                 }}

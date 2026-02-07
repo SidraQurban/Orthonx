@@ -16,7 +16,7 @@ const MyDiagnosis = () => {
       resizeMode="cover"
     >
       <View style={{ paddingHorizontal: responsiveHeight(2) }}>
-        <View style={{ marginTop: responsiveHeight(1) }}>
+        <View style={{ marginTop: responsiveHeight(2) }}>
           <Text style={{ fontSize: responsiveFontSize(2), fontWeight: "bold" }}>
             New Diagnosis
           </Text>

@@ -8,6 +8,7 @@ import {
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import MaterialDesignIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const ProfileDetails = () => {
   return (
@@ -29,7 +30,7 @@ const ProfileDetails = () => {
             paddingLeft: responsiveHeight(4),
             backgroundColor: "#e9ecef",
             height: responsiveHeight(5.5),
-            width: responsiveWidth(80),
+            width: responsiveWidth(78),
           }}
         />
         <MaterialIcons
@@ -55,7 +56,7 @@ const ProfileDetails = () => {
             paddingLeft: responsiveHeight(4),
             backgroundColor: "#e9ecef",
             height: responsiveHeight(5.5),
-            width: responsiveWidth(80),
+            width: responsiveWidth(78),
           }}
         />
         <MaterialDesignIcons
@@ -90,7 +91,7 @@ const ProfileDetails = () => {
             paddingLeft: responsiveHeight(4),
             backgroundColor: "#e9ecef",
             height: responsiveHeight(5.5),
-            width: responsiveWidth(80),
+            width: responsiveWidth(78),
           }}
         />
         <Feather
@@ -140,7 +141,7 @@ const ProfileDetails = () => {
             paddingLeft: responsiveHeight(4),
             backgroundColor: "#e9ecef",
             height: responsiveHeight(5.5),
-            width: responsiveWidth(80),
+            width: responsiveWidth(78),
           }}
         />
         <SimpleLineIcons
@@ -152,6 +153,41 @@ const ProfileDetails = () => {
             marginLeft: responsiveWidth(2),
           }}
         />
+      </View>
+      {/* update btn */}
+      <View style={{ alignItems: "center", marginTop: responsiveHeight(1) }}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={{
+            marginTop: responsiveHeight(4),
+            width: responsiveWidth(60),
+            alignSelf: "center",
+            // Shadow for Android
+            elevation: 8,
+            borderRadius: responsiveHeight(10),
+          }}
+        >
+          <LinearGradient
+            colors={["#468FAF", "#00B4D8"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{
+              paddingVertical: responsiveHeight(1.5),
+              borderRadius: responsiveHeight(10),
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: responsiveFontSize(2),
+                fontWeight: "bold",
+              }}
+            >
+              Update Changes
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
       </View>
     </View>
   );

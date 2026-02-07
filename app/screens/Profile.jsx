@@ -1,10 +1,17 @@
-import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ImageBackground,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
 import React from "react";
 import {
   responsiveFontSize,
   responsiveHeight,
+  responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { Image } from "react-native";
 import ProfileDetails from "../components/ProfileDetails";
 
 const Profile = () => {
@@ -14,40 +21,46 @@ const Profile = () => {
       style={{ flex: 1 }}
       resizeMode="cover"
     >
-      <View style={{ paddingHorizontal: responsiveHeight(2) }}>
-        <View style={{ marginTop: responsiveHeight(1) }}>
-          <Text style={{ fontSize: responsiveFontSize(2), fontWeight: "bold" }}>
-            My Profile
-          </Text>
-          <Text style={{ fontSize: responsiveFontSize(1.5), color: "#6C757D" }}>
-            Manage your account settings and preferences
-          </Text>
-        </View>
-      </View>
+      {/* Header */}
       <View
         style={{
-          height: responsiveHeight(67),
-          width: responsiveHeight(40),
-          backgroundColor: "white",
-          margin: 20,
-          borderRadius: responsiveHeight(2),
+          paddingHorizontal: responsiveHeight(2),
+          paddingTop: responsiveHeight(2),
         }}
       >
-        <View
+        <Text style={{ fontSize: responsiveFontSize(2), fontWeight: "bold" }}>
+          My Profile
+        </Text>
+        <Text
           style={{
-            marginHorizontal: responsiveHeight(1),
-            flexDirection: "row",
+            fontSize: responsiveFontSize(1.5),
+            color: "#6C757D",
+            marginTop: responsiveHeight(0.5),
           }}
         >
-          <TouchableOpacity style={{ marginTop: responsiveHeight(1) }}>
+          Manage your account settings and preferences
+        </Text>
+      </View>
+
+      {/* Profile Card */}
+      <View
+        style={{
+          backgroundColor: "white",
+          margin: responsiveHeight(2),
+          borderRadius: responsiveHeight(2),
+          padding: responsiveHeight(2),
+          alignSelf: "center",
+          flex: 1, // Important: allows inner ScrollView to expand
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity>
             <Image
               source={require("../../assets/profile-pic.png")}
               style={{
-                width: 100,
-                height: 100,
-                height: responsiveHeight(10),
-                width: responsiveHeight(10),
-                borderRadius: responsiveHeight(5),
+                width: responsiveHeight(8),
+                height: responsiveHeight(8),
+                borderRadius: responsiveHeight(4),
                 backgroundColor: "gray",
               }}
             />
@@ -55,23 +68,30 @@ const Profile = () => {
           <Text
             style={{
               fontSize: responsiveFontSize(1.7),
-              marginTop: responsiveHeight(4),
-              marginLeft: responsiveHeight(2),
+              marginLeft: responsiveWidth(4),
               fontWeight: "bold",
             }}
           >
             sidraqurban34280
           </Text>
         </View>
+
+        {/* Divider */}
         <View
           style={{
-            marginTop: responsiveHeight(1),
-            marginHorizontal: responsiveHeight(1),
-            height: responsiveHeight(0.1),
+            marginTop: responsiveHeight(1.2),
+            height: 1,
             backgroundColor: "lightgray",
           }}
         />
-        <ProfileDetails />
+
+        {/* Scrollable ProfileDetails */}
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: responsiveHeight(2) }}
+          showsVerticalScrollIndicator={false}
+        >
+          <ProfileDetails />
+        </ScrollView>
       </View>
     </ImageBackground>
   );

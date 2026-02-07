@@ -20,7 +20,7 @@ const Drawer = createDrawerNavigator();
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
-      initialRouteName="Tabs"
+      initialRouteName="HomeTabs"
       screenOptions={({ navigation }) => ({
         headerShown: true,
         headerTitleAlign: "center",
@@ -72,7 +72,7 @@ const DrawerNavigator = () => {
 
         let activeTab = "Home";
 
-        if (currentRoute === "Tabs") {
+        if (currentRoute === "HomeTabs") {
           const tabState = props.state.routes[props.state.index]?.state;
           if (tabState) {
             activeTab = tabState.routeNames[tabState.index];
@@ -149,11 +149,11 @@ const DrawerNavigator = () => {
 
               {/* Overview */}
               <DrawerItem
-                label="Overview"
+                label="Home"
                 icon="home"
                 active={isActive("Home")}
                 onPress={() =>
-                  props.navigation.navigate("Tabs", {
+                  props.navigation.navigate("HomeTabs", {
                     screen: "Home",
                   })
                 }
@@ -164,7 +164,7 @@ const DrawerNavigator = () => {
                 icon="file-document-outline"
                 active={isActive("Reports")}
                 onPress={() =>
-                  props.navigation.navigate("Tabs", {
+                  props.navigation.navigate("HomeTabs", {
                     screen: "Reports",
                   })
                 }
@@ -175,7 +175,7 @@ const DrawerNavigator = () => {
                 icon="account-outline"
                 active={isActive("Profile")}
                 onPress={() =>
-                  props.navigation.navigate("Tabs", {
+                  props.navigation.navigate("HomeTabs", {
                     screen: "Profile",
                   })
                 }
@@ -186,7 +186,7 @@ const DrawerNavigator = () => {
                 icon="history"
                 active={isActive("History")}
                 onPress={() =>
-                  props.navigation.navigate("Tabs", {
+                  props.navigation.navigate("HomeTabs", {
                     screen: "History",
                   })
                 }
@@ -226,7 +226,7 @@ const DrawerNavigator = () => {
         );
       }}
     >
-      <Drawer.Screen name="Tabs" component={MainStack} />
+      <Drawer.Screen name="HomeTabs" component={MainStack} />
     </Drawer.Navigator>
   );
 };

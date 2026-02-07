@@ -30,7 +30,7 @@ const ReportsScreen = () => {
             marginBottom: responsiveHeight(2),
           }}
         >
-          View your past X-ray analysis records
+          View your X-ray reports and insights
         </Text>
       </View>
       <ReportActivity />

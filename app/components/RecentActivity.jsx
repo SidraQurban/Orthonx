@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
 
   viewAll: {
     fontSize: responsiveFontSize(1.4),
-    color: "#1A73E8",
+    color: "#468FAF",
   },
 
   row: {

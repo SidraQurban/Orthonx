@@ -6,6 +6,7 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import UploadImage from "../components/UploadImage";
+import Chatbot from "../components/Chatbot";
 
 const MyDiagnosis = () => {
   return (
@@ -25,6 +26,7 @@ const MyDiagnosis = () => {
         </View>
         <UploadImage />
       </View>
+      <Chatbot />
     </ImageBackground>
   );
 };

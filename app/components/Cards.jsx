@@ -5,8 +5,9 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import MaterialDesignIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Cards = () => {
   const navigation = useNavigation();
@@ -43,8 +44,14 @@ const Cards = () => {
             alignItems: "center",
           }}
         >
-          <Icon name="file-document-outline" color="#ADB5BD" size={30} />
-          <Text style={{ marginTop: responsiveHeight(1) }}> My Reports</Text>
+          <MaterialDesignIcons
+            name="image-multiple-outline"
+            color="#ADB5BD"
+            size={27}
+          />
+          <Text style={{ marginTop: responsiveHeight(1) }}>
+            Batch Diagnosis
+          </Text>
         </TouchableOpacity>
       </View>
       <View
@@ -54,6 +61,20 @@ const Cards = () => {
           marginTop: responsiveHeight(2),
         }}
       >
+        <TouchableOpacity
+          onPress={() => navigation.navigate("History")}
+          style={{
+            height: responsiveHeight(13),
+            width: responsiveWidth(45),
+            backgroundColor: "#fff",
+            borderRadius: responsiveHeight(3),
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <FontAwesome name="stethoscope" size={30} color="#ADB5BD" />
+          <Text style={{ marginTop: responsiveHeight(1) }}>Consult Doctor</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={{
             height: responsiveHeight(13),
@@ -66,20 +87,6 @@ const Cards = () => {
         >
           <MaterialIcons name="event-note" size={30} color="#ADB5BD" />
           <Text style={{ marginTop: responsiveHeight(1) }}>Appointments</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("History")}
-          style={{
-            height: responsiveHeight(13),
-            width: responsiveWidth(45),
-            backgroundColor: "#fff",
-            borderRadius: responsiveHeight(3),
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <AntDesign name="clock-circle" size={30} color="#ADB5BD" />
-          <Text style={{ marginTop: responsiveHeight(1) }}>History</Text>
         </TouchableOpacity>
       </View>
     </View>

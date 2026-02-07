@@ -62,7 +62,7 @@ const Cards = () => {
         }}
       >
         <TouchableOpacity
-          onPress={() => navigation.navigate("History")}
+          onPress={() => navigation.navigate("ConsultDoctor")}
           style={{
             height: responsiveHeight(13),
             width: responsiveWidth(45),

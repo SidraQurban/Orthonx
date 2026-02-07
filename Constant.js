@@ -147,3 +147,48 @@ export const ReportData = [
     image: require("./assets/img1.png"),
   },
 ];
+
+export const Doctors = [
+  {
+    name: "Dr. Aisha Khan",
+    specialty: "Orthopedic Surgeon",
+    experience: "12 Years Experience",
+    rating: "4.9 (500+ Ratings)",
+    image: require("./assets/dr aisha.png"),
+  },
+  {
+    name: "Dr. Omar Siddiqui",
+    specialty: "General Physician",
+    experience: "8 Years Experience",
+    rating: "4.7 (320+ Ratings)",
+    image: require("./assets/dr omar.png"),
+  },
+  {
+    name: "Dr. Sofia Rossi",
+    specialty: "Radiologist",
+    experience: "5 Years Experience",
+    rating: "4.5 (180+ Ratings)",
+    image: require("./assets/dr sofia.png"),
+  },
+  {
+    name: "Dr. Zain Malik",
+    specialty: "Trauma Specialist",
+    experience: "10 Years Experience",
+    rating: "4.8 (400+ Ratings)",
+    image: require("./assets/dr zain.png"),
+  },
+  {
+    name: "Dr. Sara Rahman",
+    specialty: "Pediatrician",
+    experience: "7 Years Experience",
+    rating: "4.6 (250+ Ratings)",
+    image: require("./assets/dr sara.png"),
+  },
+  {
+    name: "Dr. Iqra Farooq",
+    specialty: "Orthopedic Specialist",
+    experience: "15 Years Experience",
+    rating: "4.9 (600+ Ratings)",
+    image: require("./assets/dr iqra.png"),
+  },
+];

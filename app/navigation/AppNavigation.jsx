@@ -1,4 +1,3 @@
-// navigation/AppNavigation.js
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -21,7 +20,7 @@ const AppNavigation = () => {
         <Stack.Screen name="Role" component={RoleScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
-        {/* Once logged in, go to drawer (which contains bottom tabs) */}
+        {/* Drawer contains BottomTabsStack + ConsultDoctor */}
         <Stack.Screen name="HomeDrawer" component={DrawerNavigator} />
       </Stack.Navigator>
     </NavigationContainer>

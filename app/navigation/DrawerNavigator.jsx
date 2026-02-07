@@ -5,7 +5,8 @@ import {
   createDrawerNavigator,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import BottomTabsNavigator from "./BottomTabsNavigator";
+import MainStack from "./MainStack";
+
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   responsiveWidth,
@@ -19,7 +20,7 @@ const Drawer = createDrawerNavigator();
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
-      initialRouteName="HomeTabs"
+      initialRouteName="Tabs"
       screenOptions={({ navigation }) => ({
         headerShown: true,
         headerTitleAlign: "center",
@@ -71,7 +72,7 @@ const DrawerNavigator = () => {
 
         let activeTab = "Home";
 
-        if (currentRoute === "HomeTabs") {
+        if (currentRoute === "Tabs") {
           const tabState = props.state.routes[props.state.index]?.state;
           if (tabState) {
             activeTab = tabState.routeNames[tabState.index];
@@ -152,7 +153,7 @@ const DrawerNavigator = () => {
                 icon="home"
                 active={isActive("Home")}
                 onPress={() =>
-                  props.navigation.navigate("HomeTabs", {
+                  props.navigation.navigate("Tabs", {
                     screen: "Home",
                   })
                 }
@@ -163,7 +164,7 @@ const DrawerNavigator = () => {
                 icon="file-document-outline"
                 active={isActive("Reports")}
                 onPress={() =>
-                  props.navigation.navigate("HomeTabs", {
+                  props.navigation.navigate("Tabs", {
                     screen: "Reports",
                   })
                 }
@@ -174,7 +175,7 @@ const DrawerNavigator = () => {
                 icon="account-outline"
                 active={isActive("Profile")}
                 onPress={() =>
-                  props.navigation.navigate("HomeTabs", {
+                  props.navigation.navigate("Tabs", {
                     screen: "Profile",
                   })
                 }
@@ -185,7 +186,7 @@ const DrawerNavigator = () => {
                 icon="history"
                 active={isActive("History")}
                 onPress={() =>
-                  props.navigation.navigate("HomeTabs", {
+                  props.navigation.navigate("Tabs", {
                     screen: "History",
                   })
                 }
@@ -225,7 +226,7 @@ const DrawerNavigator = () => {
         );
       }}
     >
-      <Drawer.Screen name="HomeTabs" component={BottomTabsNavigator} />
+      <Drawer.Screen name="Tabs" component={MainStack} />
     </Drawer.Navigator>
   );
 };

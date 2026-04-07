@@ -1,34 +1,74 @@
-import { View, Text, ImageBackground } from "react-native";
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
-import {
-  responsiveFontSize,
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
 import UploadImage from "../components/UploadImage";
-import Chatbot from "../components/Chatbot";
+import { COLORS, SIZES } from "../constants/Theme";
+import { Feather } from "@expo/vector-icons";
 
-const MyDiagnosis = () => {
+const MyDiagnosis = ({ navigation }) => {
   return (
-    <ImageBackground
-      source={require("../../assets/bgimg.png")}
-      style={{ flex: 1 }}
-      resizeMode="cover"
-    >
-      <View style={{ paddingHorizontal: responsiveHeight(2) }}>
-        <View style={{ marginTop: responsiveHeight(2) }}>
-          <Text style={{ fontSize: responsiveFontSize(2), fontWeight: "bold" }}>
-            New Diagnosis
-          </Text>
-          <Text style={{ fontSize: responsiveFontSize(1.5), color: "#6C757D" }}>
-            Upload an X-ray Image for instant AI analysis
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Feather name="arrow-left" size={24} color={COLORS.text} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>AI Bone Diagnosis</Text>
+        <View style={{ width: 24 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.infoBox}>
+          <Feather name="info" size={20} color={COLORS.primary} />
+          <Text style={styles.infoText}>
+            Please upload a clear X-ray image for the most accurate AI fracture detection.
           </Text>
         </View>
+
         <UploadImage />
-      </View>
-      <Chatbot />
-    </ImageBackground>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: SIZES.padding,
+    paddingTop: 20
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: COLORS.text,
+  },
+  scrollContent: {
+    paddingHorizontal: SIZES.padding,
+    paddingBottom: 100,
+  },
+  infoBox: {
+    flexDirection: "row",
+    backgroundColor: `${COLORS.primary}10`,
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 20,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: `${COLORS.primary}30`,
+  },
+  infoText: {
+    fontSize: 13,
+    color: COLORS.primary,
+    marginLeft: 12,
+    lineHeight: 18,
+    flex: 1,
+  },
+});
 
 export default MyDiagnosis;

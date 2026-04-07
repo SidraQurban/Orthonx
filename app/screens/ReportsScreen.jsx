@@ -5,7 +5,7 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import ReportActivity from "../components/ReportActivity";
-import Chatbot from "../components/Chatbot";
+
 
 const ReportsScreen = () => {
   return (
@@ -34,7 +34,6 @@ const ReportsScreen = () => {
         </Text>
       </View>
       <ReportActivity />
-      <Chatbot />
     </ImageBackground>
   );
 };

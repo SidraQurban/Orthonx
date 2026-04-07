@@ -1,87 +1,98 @@
-import React, { useRef, useEffect } from "react";
-import { TouchableOpacity, Image, View, Animated } from "react-native";
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
+import React, { useEffect, useRef } from "react";
+import { 
+  View, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Image, 
+  Animated, 
+  Easing 
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { COLORS, SHADOWS } from "../constants/Theme";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 
 const Chatbot = () => {
-  const fadeAnim = useRef(new Animated.Value(0.5)).current; // start semi-transparent
+  const navigation = useNavigation();
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(fadeAnim, {
-          toValue: 1, // fully visible
-          duration: 1000,
-          useNativeDriver: false,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 0.3, // faded out
-          duration: 1000,
-          useNativeDriver: false,
-        }),
-      ]),
-    ).start();
-  }, []);
+    const pulse = () => {
+      pulseAnim.setValue(1);
+      Animated.timing(pulseAnim, {
+        toValue: 2,
+        duration: 2000,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }).start(() => pulse());
+    };
 
-  const outerSize = responsiveHeight(8);
-  const innerSize = responsiveHeight(7);
+    pulse();
+  }, [pulseAnim]);
 
   return (
     <TouchableOpacity
-      style={{
-        position: "absolute",
-        bottom: responsiveHeight(2),
-        right: responsiveHeight(2),
-        width: outerSize,
-        height: outerSize,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-      activeOpacity={0.8}
+      onPress={() => navigation.navigate("Chat")}
+      activeOpacity={0.9}
+      style={styles.container}
     >
-      {/* Fading Outer Border with Shadow */}
-      <Animated.View
-        style={{
-          position: "absolute",
-          width: outerSize,
-          height: outerSize,
-          borderRadius: outerSize / 2,
-          borderWidth: 3,
-          borderColor: "#90e0ef", // light blue border
-          opacity: fadeAnim,
-          shadowColor: "#90e0ef", // shadow color matches border
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.6,
-          shadowRadius: 10,
-          elevation: 10, // Android shadow
-        }}
+      {/* Pulsing Background Aura (Same as Web Ping) */}
+      <Animated.View 
+        style={[
+          styles.pulseRing,
+          {
+            transform: [{ scale: pulseAnim }],
+            opacity: pulseAnim.interpolate({
+              inputRange: [1, 2],
+              outputRange: [0.3, 0]
+            })
+          }
+        ]} 
       />
 
-      {/* Inner Button */}
-      <View
-        style={{
-          width: innerSize,
-          height: innerSize,
-          borderRadius: innerSize / 2,
-          backgroundColor: "#fff",
-          justifyContent: "center",
-          alignItems: "center",
-          elevation: 5,
-        }}
-      >
-        <Image
-          source={require("../../assets/orthlogo.png")}
-          style={{
-            width: responsiveWidth(10),
-            height: responsiveHeight(5),
-            resizeMode: "cover",
-          }}
+      {/* Main White Bubble */}
+      <View style={styles.bubble}>
+        <Image 
+          source={require("../../assets/orthlogo.png")} 
+          style={styles.logo} 
         />
       </View>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    bottom: responsiveHeight(12),
+    right: 25,
+    zIndex: 999,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bubble: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: COLORS.white,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: COLORS.white, // Thick white border same as web ring
+    padding: 2,
+    ...SHADOWS.medium,
+  },
+  logo: {
+    width: 45,
+    height: 45,
+    resizeMode: "contain",
+  },
+  pulseRing: {
+    position: "absolute",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: COLORS.primary, // Blue pulsing aura
+  },
+});
 
 export default Chatbot;

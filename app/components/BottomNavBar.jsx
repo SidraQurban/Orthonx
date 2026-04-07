@@ -1,52 +1,53 @@
+/**
+ * BottomNavBar — Reusable bottom navigation bar for standalone screens
+ * (screens outside the BottomTabsNavigator, e.g. Appointments, ConsultDoctor)
+ */
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
-import MyDiagnosis from "../screens/MyDiagnosis";
-import ReportsScreen from "../screens/ReportsScreen";
-import Profile from "../screens/Profile";
-import History from "../screens/History";
-import WorklistScreen from "../screens/WorklistScreen";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { COLORS, SHADOWS } from "../constants/Theme";
-import { useAuth } from "../context/AuthContext";
-
-const Tab = createBottomTabNavigator();
+import { LinearGradient } from "expo-linear-gradient";
 
 const TAB_BAR_HEIGHT = responsiveHeight(10);
 
-const CustomTabBar = ({ state, descriptors, navigation }) => {
-  const { user } = useAuth();
+const NAV_ITEMS = [
+  { name: "Home", icon: "home-variant-outline", iconActive: "home-variant", label: "Home", route: "Tabs", params: { screen: "Home" } },
+  { name: "Reports", icon: "file-chart-outline", iconActive: "file-chart", label: "Reports", route: "Tabs", params: { screen: "Reports" } },
+  { name: "MyDiagnosis", icon: null, label: "", route: "Tabs", params: { screen: "MyDiagnosis" }, isCenter: true },
+  { name: "Appointments", icon: "calendar-check-outline", iconActive: "calendar-check", label: "Appts", route: "Appointments", params: undefined },
+  { name: "Profile", icon: "account-circle-outline", iconActive: "account-circle", label: "Profile", route: "Tabs", params: { screen: "Profile" } },
+];
+
+const BottomNavBar = ({ activeTab = "" }) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.tabBarContainer}>
       <View style={styles.tabBar}>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const isFocused = state.index === index;
-          const isCenter = index === 2; // MyDiagnosis is center
+        {NAV_ITEMS.map((item) => {
+          const isFocused = activeTab === item.name;
 
           const onPress = () => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
+            if (item.route === "Appointments") {
+              navigation.navigate("Appointments");
+            } else {
+              navigation.navigate("HomeTabs", {
+                screen: item.route,
+                params: item.params,
+              });
             }
           };
 
-          // Center FAB button
-          if (isCenter) {
+          if (item.isCenter) {
             return (
               <TouchableOpacity
-                key={route.key}
+                key={item.name}
                 onPress={onPress}
                 activeOpacity={0.85}
                 style={styles.fabContainer}
@@ -63,44 +64,22 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             );
           }
 
-          const isDoctor = user?.user_type === "doctor";
-          
-          // Icon maps
-          const iconMap = {
-            Home: "home-variant",
-            Reports: isDoctor ? "clipboard-list-outline" : "file-chart-outline",
-            History: "clock-outline",
-            Profile: "account-circle-outline",
-          };
-          const iconActive = {
-            Home: "home-variant",
-            Reports: isDoctor ? "clipboard-list" : "file-chart",
-            History: "clock",
-            Profile: "account-circle",
-          };
-          const labelMap = {
-            Home: "Home",
-            Reports: isDoctor ? "Worklist" : "Reports",
-            History: "History",
-            Profile: "Profile",
-          };
-
           return (
             <TouchableOpacity
-              key={route.key}
+              key={item.name}
               onPress={onPress}
               activeOpacity={0.7}
               style={styles.tabItem}
             >
               <View style={[styles.iconPill, isFocused && styles.iconPillActive]}>
                 <Icon
-                  name={isFocused ? iconActive[route.name] : iconMap[route.name]}
+                  name={isFocused ? item.iconActive : item.icon}
                   size={responsiveFontSize(2.8)}
                   color={isFocused ? COLORS.primary : "#ADB5BD"}
                 />
               </View>
               <Text style={[styles.tabLabel, isFocused && styles.tabLabelActive]}>
-                {labelMap[route.name]}
+                {item.label}
               </Text>
             </TouchableOpacity>
           );
@@ -110,37 +89,11 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   );
 };
 
-const BottomTabsNavigator = () => {
-  const { user } = useAuth();
-  const isDoctor = user?.user_type === "doctor";
-
-  return (
-    <Tab.Navigator
-      tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{ headerShown: false }}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen 
-        name="Reports" 
-        component={isDoctor ? WorklistScreen : ReportsScreen} 
-        options={{
-          tabBarLabel: isDoctor ? "Worklist" : "Reports"
-        }}
-      />
-      <Tab.Screen name="MyDiagnosis" component={MyDiagnosis} />
-      <Tab.Screen name="History" component={History} />
-      <Tab.Screen name="Profile" component={Profile} />
-    </Tab.Navigator>
-  );
-};
-
-export default BottomTabsNavigator;
+export default BottomNavBar;
 
 const styles = StyleSheet.create({
   tabBarContainer: {
     backgroundColor: "#fff",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
     ...SHADOWS.dark,
     borderTopWidth: 1,
     borderColor: "rgba(0,0,0,0.05)",

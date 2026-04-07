@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,41 +6,59 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import {
-  responsiveFontSize,
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
-import { ReportData } from "../../Constant";
+import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { COLORS, SHADOWS, SIZES } from "../constants/Theme";
+import apiClient, { API_URL } from "../api/apiClient";
 
 const RecentActivty = () => {
   const navigation = useNavigation();
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecent = async () => {
+      try {
+        const response = await apiClient.get("/api/v1/yolo/detection/history?page=1&page_size=5");
+        setHistory(response.data.items || []);
+      } catch (error) {
+        console.error("Failed to fetch recent activity:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecent();
+  }, []);
+  
   const renderItem = ({ item }) => {
-    const isDetected = item.status === "Detected";
+    const isDetected = item.detections?.length > 0;
 
     return (
-      <TouchableOpacity activeOpacity={0.8}>
+      <TouchableOpacity 
+        activeOpacity={0.8} 
+        style={styles.card}
+        onPress={() => navigation.navigate("DiagnosisDetail", { id: item.id })}
+      >
         <View style={styles.row}>
-          {/* Left Image */}
-          <Image source={item.image} style={styles.image} />
-
-          {/* Middle Text */}
-          <View style={styles.textContainer}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.date}>{item.date}</Text>
+          <View style={styles.imageContainer}>
+            <Image 
+              source={item.result_image_url ? { uri: item.result_image_url.startsWith('http') ? item.result_image_url : `${API_URL}${item.result_image_url.startsWith('/') ? '' : '/'}${item.result_image_url}` } : require("../../assets/orthlogo.png")} 
+              style={styles.image} 
+            />
           </View>
 
-          {/* Right: Status + Arrow */}
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>{isDetected ? "Fracture Detected" : "No Fracture Found"}</Text>
+            <Text style={styles.date}>{new Date(item.timestamp).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</Text>
+          </View>
+
           <View style={styles.rightSection}>
             <View
               style={[
                 styles.statusBadge,
-                {
-                  backgroundColor: isDetected ? "#FDECEA" : "#E6F4EA",
-                },
+                { backgroundColor: isDetected ? "#FDECEA" : "#E6F4EA" },
               ]}
             >
               <Text
@@ -49,16 +67,10 @@ const RecentActivty = () => {
                   { color: isDetected ? "#D93025" : "#1E8E3E" },
                 ]}
               >
-                {item.status}
+                {isDetected ? "Urgent" : "Clear"}
               </Text>
             </View>
-
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color="#C4C4C4"
-              style={{ marginLeft: 8 }}
-            />
+            <Feather name="chevron-right" size={18} color={COLORS.gray} style={{ marginLeft: 8 }} />
           </View>
         </View>
       </TouchableOpacity>
@@ -67,7 +79,6 @@ const RecentActivty = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Recent Activity</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Reports")}>
@@ -75,92 +86,95 @@ const RecentActivty = () => {
         </TouchableOpacity>
       </View>
 
-      {/* List */}
-      <FlatList
-        data={ReportData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading ? (
+        <ActivityIndicator size="small" color={COLORS.primary} style={{ marginTop: 20 }} />
+      ) : (
+        <FlatList
+          data={history}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          scrollEnabled={false} // Since it's inside a ScrollView/FlatList parent
+          ListEmptyComponent={
+            <Text style={{ textAlign: 'center', color: COLORS.gray, padding: 20 }}>No recent activity.</Text>
+          }
+        />
+      )}
     </View>
   );
 };
 
-export default RecentActivty;
-
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: SIZES.padding,
+    marginTop: 25,
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    marginHorizontal: responsiveWidth(4),
-    borderRadius: 16,
-    padding: responsiveHeight(2),
   },
-
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: responsiveHeight(2),
+    marginBottom: 15,
   },
-
   headerTitle: {
-    fontSize: responsiveFontSize(2),
+    fontSize: 18,
+    fontWeight: "bold",
+    color: COLORS.text,
+  },
+  viewAll: {
+    fontSize: 14,
+    color: COLORS.primary,
     fontWeight: "600",
   },
-
-  viewAll: {
-    fontSize: responsiveFontSize(1.4),
-    color: "#468FAF",
+  card: {
+    backgroundColor: COLORS.white,
+    borderRadius: 16,
+    padding: 15,
+    marginBottom: 12,
+    ...SHADOWS.light,
   },
-
   row: {
     flexDirection: "row",
     alignItems: "center",
   },
-
-  image: {
-    width: responsiveWidth(10),
-    height: responsiveWidth(10),
-    borderRadius: 8,
-    marginRight: responsiveWidth(3),
+  imageContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: COLORS.lightGray,
+    overflow: "hidden",
   },
-
+  image: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
   textContainer: {
     flex: 1,
+    marginLeft: 15,
   },
-
   title: {
-    fontSize: responsiveFontSize(1.6),
-    fontWeight: "500",
+    fontSize: 14,
+    fontWeight: "bold",
+    color: COLORS.text,
   },
-
   date: {
-    fontSize: responsiveFontSize(1.3),
-    color: "#6C757D",
-    marginTop: 2,
+    fontSize: 12,
+    color: COLORS.gray,
+    marginTop: 4,
   },
-
   rightSection: {
     flexDirection: "row",
     alignItems: "center",
   },
-
   statusBadge: {
-    paddingHorizontal: responsiveWidth(3),
-    paddingVertical: responsiveHeight(0.6),
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 20,
   },
-
   statusText: {
-    fontSize: responsiveFontSize(1.2),
-    fontWeight: "500",
-  },
-
-  separator: {
-    height: 1,
-    backgroundColor: "#F1F3F4",
-    marginVertical: responsiveHeight(1.5),
+    fontSize: 10,
+    fontWeight: "bold",
   },
 });
+
+export default RecentActivty;

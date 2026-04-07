@@ -1,23 +1,26 @@
 // DrawerNavigator.js
 import React from "react";
-import { View, Text, TouchableOpacity, Image, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import MainStack from "./MainStack";
-
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   responsiveWidth,
   responsiveHeight,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { EvilIcons } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
+import { COLORS, SHADOWS } from "../constants/Theme";
 
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
+  const { user, logout } = useAuth();
+
   return (
     <Drawer.Navigator
       initialRouteName="HomeTabs"
@@ -42,44 +45,20 @@ const DrawerNavigator = () => {
             <Icon name="menu" size={30} color="#ADB5BD" />
           </TouchableOpacity>
         ),
-        headerRight: () => (
-          <TouchableOpacity style={{ marginRight: responsiveWidth(3) }}>
-            <View
-              style={{
-                width: responsiveHeight(5),
-                height: responsiveHeight(5),
-                borderRadius: responsiveHeight(2.5),
-                backgroundColor: "#CED4DA",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Image
-                source={require("../../assets/profile-pic.png")}
-                style={{
-                  width: responsiveHeight(4.5),
-                  height: responsiveHeight(4.5),
-                  borderRadius: responsiveHeight(2.25),
-                }}
-              />
-            </View>
-          </TouchableOpacity>
-        ),
       })}
       drawerContent={(props) => {
-        /* -------- ACTIVE TAB DETECTION -------- */
-        const currentRoute = props.state.routeNames[props.state.index];
-
-        let activeTab = "Home";
-
-        if (currentRoute === "HomeTabs") {
-          const tabState = props.state.routes[props.state.index]?.state;
-          if (tabState) {
-            activeTab = tabState.routeNames[tabState.index];
+        /* -------- ACTIVE TAB DETECTION (NATIVE NESTED STATE) -------- */
+        const getActiveRouteName = (state) => {
+          const route = state.routes[state.index];
+          if (route.state) {
+            return getActiveRouteName(route.state);
           }
-        }
+          return route.name;
+        };
 
+        const activeTab = getActiveRouteName(props.state);
         const isActive = (name) => activeTab === name;
+        const isDoctor = user?.user_type === "doctor";
 
         return (
           <DrawerContentScrollView
@@ -92,16 +71,25 @@ const DrawerNavigator = () => {
           >
             {/* TOP */}
             <View>
-              {/* Logo */}
-              <Image
-                source={require("../../assets/logoapp.png")}
-                style={{
-                  height: responsiveHeight(5),
-                  width: responsiveWidth(60),
-                  resizeMode: "cover",
-                  alignSelf: "center",
-                }}
-              />
+              {/* User Profile Info */}
+              <View style={{ alignItems: 'center', marginBottom: responsiveHeight(2) }}>
+                  <View style={{
+                    width: responsiveHeight(10),
+                    height: responsiveHeight(10),
+                    borderRadius: responsiveHeight(5),
+                    backgroundColor: '#F1F3F4',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginBottom: 10,
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    ...SHADOWS.light
+                  }}>
+                    <Icon name="account" size={responsiveHeight(6)} color="#ADB5BD" />
+                  </View>
+                  <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#343A40' }}>{user?.name || user?.email?.split('@')[0] || 'User'}</Text>
+                  <Text style={{ fontSize: 12, color: '#6C757D' }}>{user?.user_type === 'doctor' ? 'Medical Professional' : 'Patient'}</Text>
+              </View>
 
               {/* Divider */}
               <View
@@ -109,106 +97,56 @@ const DrawerNavigator = () => {
                   height: 1,
                   backgroundColor: "#F1F3F4",
                   marginVertical: responsiveHeight(2),
-                  marginTop: responsiveHeight(3),
                 }}
               />
 
-              {/* Search */}
-              <View
-                style={{
-                  position: "relative",
-                  marginBottom: responsiveHeight(3),
-                }}
-              >
-                <EvilIcons
-                  name="search"
-                  size={24}
-                  color="#6c757d"
-                  style={{
-                    position: "absolute",
-                    left: responsiveWidth(4),
-                    top: "50%",
-                    transform: [{ translateY: -12 }],
-                    zIndex: 1,
-                  }}
-                />
-
-                <TextInput
-                  placeholder="Search"
-                  placeholderTextColor="#adb5bd"
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#ced4da",
-                    borderRadius: responsiveHeight(3),
-                    paddingLeft: responsiveWidth(12),
-                    backgroundColor: "#e9ecef",
-                    height: responsiveHeight(5.5),
-                  }}
-                />
-              </View>
-
-              {/* Overview */}
+              {/* Navigation Links */}
               <DrawerItem
-                label="Home"
-                icon="home"
+                label="Dashboard"
+                icon="view-dashboard-outline"
                 active={isActive("Home")}
-                onPress={() =>
-                  props.navigation.navigate("HomeTabs", {
-                    screen: "Home",
-                  })
-                }
+                onPress={() => props.navigation.navigate("HomeTabs", { screen: "Tabs", params: { screen: "Home" } })}
               />
-              {/* History */}
               <DrawerItem
-                label="Reports"
-                icon="file-document-outline"
-                active={isActive("Reports")}
-                onPress={() =>
-                  props.navigation.navigate("HomeTabs", {
-                    screen: "Reports",
-                  })
-                }
+                label="New Diagnosis"
+                icon="camera-plus-outline"
+                active={isActive("MyDiagnosis")}
+                onPress={() => props.navigation.navigate("HomeTabs", { screen: "Tabs", params: { screen: "MyDiagnosis" } })}
               />
-              {/* Profile */}
+              <DrawerItem
+                label="Diagnostic History"
+                icon="history"
+                active={isActive("History")}
+                onPress={() => props.navigation.navigate("HomeTabs", { screen: "Tabs", params: { screen: "History" } })}
+              />
+              <DrawerItem
+                label={isDoctor ? "Patient Worklist" : "Medical Reports"}
+                icon={isDoctor ? "clipboard-list-outline" : "file-document-outline"}
+                active={isActive("Reports")}
+                onPress={() => props.navigation.navigate("HomeTabs", { screen: "Tabs", params: { screen: "Reports" } })}
+              />
+              <DrawerItem
+                label="Appointments"
+                icon="calendar-check-outline"
+                active={isActive("Appointments")}
+                onPress={() => props.navigation.navigate("HomeTabs", { screen: "Appointments" })}
+              />
               <DrawerItem
                 label="My Profile"
                 icon="account-outline"
                 active={isActive("Profile")}
-                onPress={() =>
-                  props.navigation.navigate("HomeTabs", {
-                    screen: "Profile",
-                  })
-                }
-              />
-              {/* History */}
-              <DrawerItem
-                label="History"
-                icon="history"
-                active={isActive("History")}
-                onPress={() =>
-                  props.navigation.navigate("HomeTabs", {
-                    screen: "History",
-                  })
-                }
+                onPress={() => props.navigation.navigate("HomeTabs", { screen: "Tabs", params: { screen: "Profile" } })}
               />
             </View>
-            {/* Divider */}
-            <View
-              style={{
-                height: 1,
-                backgroundColor: "#F1F3F4",
-                marginVertical: responsiveHeight(2),
-                marginTop: responsiveHeight(30),
-              }}
-            />
 
             {/* BOTTOM */}
             <TouchableOpacity
+              onPress={logout}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
                 paddingHorizontal: responsiveWidth(4),
-                marginBottom: responsiveHeight(2),
+                marginBottom: responsiveHeight(5),
               }}
             >
               <Icon name="logout" size={22} color="#e03131" />
@@ -226,7 +164,17 @@ const DrawerNavigator = () => {
         );
       }}
     >
-      <Drawer.Screen name="HomeTabs" component={MainStack} />
+      <Drawer.Screen 
+        name="HomeTabs" 
+        component={MainStack} 
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "Tabs";
+          const noHeaderScreens = ["Chat", "ConsultDoctor", "BookAppointment", "Appointments", "DiagnosisDetail"];
+          return {
+            headerShown: !noHeaderScreens.includes(routeName),
+          };
+        }}
+      />
     </Drawer.Navigator>
   );
 };
@@ -237,20 +185,22 @@ const DrawerItem = ({ label, icon, active, onPress }) => (
     style={{
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: active ? "#00B4D8" : "transparent",
-      paddingVertical: responsiveHeight(1.6),
+      backgroundColor: active ? `${COLORS.primary}15` : "transparent",
+      paddingVertical: responsiveHeight(1.8),
       paddingHorizontal: responsiveWidth(4),
-      borderRadius: 14,
-      marginBottom: responsiveHeight(1),
+      borderRadius: 12,
+      marginBottom: responsiveHeight(0.8),
+      borderLeftWidth: 4,
+      borderLeftColor: active ? COLORS.primary : "transparent",
     }}
   >
-    <Icon name={icon} size={22} color={active ? "#fff" : "#6c757d"} />
+    <Icon name={icon} size={24} color={active ? COLORS.primary : COLORS.gray} />
     <Text
       style={{
         marginLeft: 15,
-        fontSize: responsiveFontSize(2),
-        fontWeight: active ? "600" : "400",
-        color: active ? "#fff" : "#6c757d",
+        fontSize: responsiveFontSize(1.9),
+        fontWeight: active ? "700" : "500",
+        color: active ? COLORS.primary : COLORS.gray,
       }}
     >
       {label}

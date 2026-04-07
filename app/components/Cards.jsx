@@ -1,96 +1,93 @@
-import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Feather, MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import MaterialDesignIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { COLORS, SIZES, SHADOWS } from "../constants/Theme";
 
 const Cards = () => {
   const navigation = useNavigation();
-  return (
-    <View
-      style={{
-        marginHorizontal: responsiveWidth(4),
-        marginTop: responsiveHeight(2),
-      }}
-    >
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("MyDiagnosis")}
-          style={{
-            height: responsiveHeight(13),
-            width: responsiveWidth(45),
-            backgroundColor: "#fff",
-            borderRadius: responsiveHeight(3),
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Icon name="camera" size={30} color="#ADB5BD" />
-          <Text style={{ marginTop: responsiveHeight(1) }}> New Diagnosis</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Reports")}
-          style={{
-            height: responsiveHeight(13),
-            width: responsiveWidth(45),
-            backgroundColor: "#fff",
-            borderRadius: responsiveHeight(3),
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <MaterialDesignIcons
-            name="image-multiple-outline"
-            color="#ADB5BD"
-            size={27}
-          />
-          <Text style={{ marginTop: responsiveHeight(1) }}>
-            Batch Diagnosis
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: responsiveHeight(2),
-        }}
+
+  const ActionCard = ({ title, icon, iconType, onPress, color = COLORS.primary }) => {
+    const IconComponent = iconType === "MCI" ? MaterialCommunityIcons : iconType === "FA5" ? FontAwesome5 : Feather;
+    
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.7}
+        style={styles.card}
       >
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ConsultDoctor")}
-          style={{
-            height: responsiveHeight(13),
-            width: responsiveWidth(45),
-            backgroundColor: "#fff",
-            borderRadius: responsiveHeight(3),
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <FontAwesome name="stethoscope" size={30} color="#ADB5BD" />
-          <Text style={{ marginTop: responsiveHeight(1) }}>Consult Doctor</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: responsiveHeight(13),
-            width: responsiveWidth(45),
-            backgroundColor: "#fff",
-            borderRadius: responsiveHeight(3),
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <MaterialIcons name="event-note" size={30} color="#ADB5BD" />
-          <Text style={{ marginTop: responsiveHeight(1) }}>Appointments</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={[styles.iconContainer, { backgroundColor: `${color}15` }]}>
+          <IconComponent name={icon} size={28} color={color} />
+        </View>
+        <Text style={styles.cardTitle}>{title}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <ActionCard
+        title="New Diagnosis"
+        icon="camera"
+        onPress={() => navigation.navigate("MyDiagnosis")}
+      />
+      <ActionCard
+        title="Medical Reports"
+        icon="file-text"
+        onPress={() => navigation.navigate("Reports")}
+        color="#2D6A4F"
+      />
+      <ActionCard
+        title="Appointments"
+        icon="calendar-month-outline"
+        iconType="MCI"
+        onPress={() => navigation.navigate("Appointments")}
+        color="#1A73E8"
+      />
+      <ActionCard
+        title="History"
+        icon="history"
+        iconType="MCI"
+        onPress={() => navigation.navigate("History")}
+        color="#6C757D"
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: SIZES.padding,
+    marginTop: 20,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  card: {
+    width: "48%",
+    backgroundColor: COLORS.white,
+    borderRadius: 25,
+    padding: 20,
+    alignItems: "center",
+    marginBottom: SIZES.padding,
+    ...SHADOWS.medium,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.03)",
+  },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: COLORS.text,
+    textAlign: "center",
+  },
+});
 
 export default Cards;

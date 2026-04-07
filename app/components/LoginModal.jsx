@@ -1,271 +1,205 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import {
-  responsiveFontSize,
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { Image } from "react-native";
-import MaterialDesignIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+  View,
+  Text,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-const LoginModal = ({ navigation }) => {
-  // const navigation = useNavigation();
+import { Feather } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
+import { COLORS, SHADOWS, GRADIENTS } from "../constants/Theme";
+import ModernInput from "./ModernInput";
+import InfoModal from "./InfoModal";
+
+const LoginModal = ({ visible, onClose, onSignUpPress, onForgotPasswordPress, onResendVerificationPress }) => {
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showNetworkModal, setShowNetworkModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({ title: "", message: "", icon: "wifi-off", iconColor: COLORS.gray });
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      const result = await login(email, password);
+      setLoading(false);
+      if (result.success) {
+        onClose();
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setLoading(false);
+      if (err.code === "ECONNABORTED" || err.message?.toLowerCase().includes("timeout")) {
+        setModalConfig({
+          title: "Request Timed Out",
+          message: "The server is taking too long to respond. Please check your connectivity and try again.",
+          icon: "clock",
+          iconColor: COLORS.warning,
+        });
+        setShowNetworkModal(true);
+      } else if (err.message === "Network Error") {
+        setModalConfig({
+          title: "Connection Lost",
+          message: "Could not connect to the Orthonx server. Please check your network or server IP.",
+          icon: "wifi-off",
+          iconColor: COLORS.gray,
+        });
+        setShowNetworkModal(true);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    }
+  };
+
   return (
-    <View>
-      <View
-        style={{
-          marginTop: responsiveHeight(7),
-          backgroundColor: "white",
-          height: responsiveHeight(68),
-          borderRadius: responsiveHeight(4),
-          marginHorizontal: responsiveHeight(2),
-        }}
-      >
-        <View style={{ marginTop: responsiveHeight(2), alignItems: "center" }}>
-          <Text
+    <Modal visible={visible} animationType="slide" transparent>
+      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: "flex-end" }}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ width: '100%' }}
+        >
+          <View
             style={{
-              fontSize: responsiveFontSize(2.5),
-              fontWeight: "bold",
-              color: "#000",
+              backgroundColor: COLORS.white,
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              padding: 25,
+              paddingBottom: 40,
+              ...SHADOWS.dark,
             }}
           >
-            Welcome Back
-          </Text>
-        </View>
-        <View style={{ marginTop: responsiveHeight(1), alignItems: "center" }}>
-          <Text style={{ color: "#6c757d", fontSize: responsiveFontSize(1.8) }}>
-            Sign in to access your Orthonx dashboard
-          </Text>
-        </View>
-
-        <View style={{ marginHorizontal: responsiveHeight(2) }}>
-          {/* Email */}
-          <View style={{ marginTop: responsiveHeight(4) }}>
-            <TextInput
-              placeholder="Email / Username"
-              style={{
-                marginTop: responsiveHeight(1),
-                borderWidth: 1,
-                borderColor: "#ced4da",
-                borderRadius: responsiveHeight(2),
-                paddingLeft: responsiveHeight(4),
-                backgroundColor: "#e9ecef",
-                height: responsiveHeight(5.5),
-              }}
-            />
-            <MaterialDesignIcons
-              name="email-outline"
-              color="#6c757d"
-              size={19}
-              style={{
-                marginTop: responsiveHeight(-3.8),
-                marginLeft: responsiveWidth(2),
-              }}
-            />
-          </View>
-          {/* Password */}
-          <View style={{ marginTop: responsiveHeight(4) }}>
-            <TextInput
-              secureTextEntry={!showPassword}
-              placeholder="Password"
-              style={{
-                marginTop: responsiveHeight(1),
-                borderWidth: 1,
-                borderColor: "#ced4da",
-                borderRadius: responsiveHeight(2),
-                paddingLeft: responsiveHeight(4),
-                backgroundColor: "#e9ecef",
-                height: responsiveHeight(5.5),
-              }}
-            />
-            <SimpleLineIcons
-              name="lock"
-              color="#6c757d"
-              size={18}
-              style={{
-                marginTop: responsiveHeight(-4),
-                marginLeft: responsiveWidth(2),
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-              style={{
-                position: "absolute",
-                marginLeft: responsiveWidth(73),
-                marginTop: responsiveHeight(2.8),
-              }}
-            >
-              <Ionicons
-                name={showPassword ? "eye" : "eye-off"}
-                size={20}
-                color="#6c757d"
-              />
-            </TouchableOpacity>
-          </View>
-          {/* forgot */}
-          <View>
-            <View
-              style={{
-                marginTop: responsiveHeight(3),
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <TouchableOpacity>
-                <Text
-                  style={{
-                    color: "#468faf",
-                    fontSize: responsiveFontSize(1.5),
-                  }}
-                >
-                  Forgot Password?
-                </Text>
+            {/* Header */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
+              <View>
+                <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text }}>Welcome Back</Text>
+                <Text style={{ color: COLORS.gray, marginTop: 5 }}>Sign in to continue</Text>
+              </View>
+              <TouchableOpacity onPress={onClose} style={{ padding: 5 }}>
+                <Feather name="x" size={24} color={COLORS.gray} />
               </TouchableOpacity>
             </View>
 
-            {/* login btn */}
-            <View
-              style={{ alignItems: "center", marginTop: responsiveHeight(1) }}
+            {error ? (
+              <View style={{ 
+                backgroundColor: '#FFF0F0', 
+                padding: 12, 
+                borderRadius: 10, 
+                marginBottom: 20,
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}>
+                <Feather name="alert-circle" size={18} color={COLORS.danger} />
+                <Text style={{ color: COLORS.danger, marginLeft: 10, fontSize: 13 }}>{String(error)}</Text>
+              </View>
+            ) : null}
+
+            {/* Inputs */}
+            <ModernInput
+              label="Email Address"
+              icon="mail"
+              placeholder="name@example.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+
+            <ModernInput
+              label="Password"
+              icon="lock"
+              placeholder="••••••••"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+              togglePassword={() => setShowPassword(!showPassword)}
+            />
+
+            {/* Forgot Password Link */}
+            <TouchableOpacity 
+              onPress={onForgotPasswordPress}
+              style={{ alignSelf: 'flex-end', marginBottom: 25, marginTop: -5 }}
             >
-              <TouchableOpacity
-                onPress={() => navigation.replace("HomeDrawer")}
-                activeOpacity={0.8}
+              <Text style={{ color: COLORS.primary, fontSize: 13, fontWeight: "600" }}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            {/* Login Button */}
+            <TouchableOpacity onPress={handleLogin} disabled={loading} activeOpacity={0.8}>
+              <LinearGradient
+                colors={GRADIENTS.primary}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
                 style={{
-                  marginTop: responsiveHeight(4),
-                  width: responsiveWidth(65),
-                  alignSelf: "center",
-                  // Shadow for Android
-                  elevation: 8,
-                  borderRadius: responsiveHeight(10),
+                  height: 55,
+                  borderRadius: 12,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  opacity: loading ? 0.7 : 1,
+                  ...SHADOWS.medium
                 }}
               >
-                <LinearGradient
-                  colors={["#468FAF", "#00B4D8"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={{
-                    paddingVertical: responsiveHeight(1.5),
-                    borderRadius: responsiveHeight(10),
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "#fff",
-                      fontSize: responsiveFontSize(2.5),
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Login
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
+                {loading ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <ActivityIndicator color={COLORS.white} />
+                    <Text style={{ color: COLORS.white, fontSize: 18, fontWeight: "bold", marginLeft: 10 }}>Signing in...</Text>
+                  </View>
+                ) : (
+                  <Text style={{ color: COLORS.white, fontSize: 18, fontWeight: "bold" }}>Sign In</Text>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+
+            {/* Footer */}
             <View
               style={{
-                marginTop: responsiveHeight(2),
                 flexDirection: "row",
                 justifyContent: "center",
+                marginTop: 25,
               }}
             >
-              <Text
-                style={{
-                  fontSize: responsiveFontSize(1.75),
-                }}
-              >
-                Don't have an account?
-              </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-                <Text
-                  style={{
-                    color: "#468faf",
-                    fontSize: responsiveFontSize(1.75),
-                    marginLeft: responsiveWidth(1),
-                  }}
-                >
-                  Create Account
-                </Text>
+              <Text style={{ color: COLORS.gray }}>Don't have an account? </Text>
+              <TouchableOpacity onPress={onSignUpPress}>
+                <Text style={{ color: COLORS.primary, fontWeight: "bold" }}>Sign Up</Text>
               </TouchableOpacity>
             </View>
-            {/* cont with */}
-            <View>
-              <View
-                style={{ alignItems: "center", marginTop: responsiveHeight(2) }}
-              >
-                <Text style={{ fontSize: responsiveFontSize(1.8) }}>
-                  Or Continue with
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  marginTop: responsiveHeight(2),
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "#e9ecef",
-                    borderRadius: responsiveHeight(2),
-                    padding: responsiveWidth(0.8),
-                    marginHorizontal: responsiveWidth(2),
-                    width: responsiveHeight(6),
-                    height: responsiveHeight(6),
-                    alignItems: "center",
-                    justifyContent: "center",
-                    elevation: 3,
-                    shadowColor: "#000", //ios shadow
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 2,
-                  }}
-                >
-                  <Image
-                    source={require("../../assets/google.png")}
-                    style={{
-                      resizeMode: "center",
-                      height: responsiveHeight(6),
-                      width: responsiveWidth(6),
-                    }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  // onPress={() => navigation.navigate("PhoneSignup")}
-                  style={{
-                    backgroundColor: "#e9ecef",
-                    borderRadius: responsiveHeight(2),
-                    padding: responsiveWidth(0.8),
-                    marginHorizontal: responsiveWidth(2),
-                    width: responsiveHeight(6),
-                    height: responsiveHeight(6),
-                    alignItems: "center",
-                    justifyContent: "center",
-                    elevation: 3,
-                    shadowColor: "#000", //ios shadow
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 2,
-                  }}
-                >
-                  <Image
-                    source={require("../../assets/phone.png")}
-                    style={{
-                      height: responsiveHeight(4),
-                      width: responsiveHeight(4),
-                      resizeMode: "contain",
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
+
+            {/* Resend Verification Footer */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 15,
+              }}
+            >
+              <Text style={{ color: COLORS.gray, fontSize: 13 }}>Didn't receive email? </Text>
+              <TouchableOpacity onPress={onResendVerificationPress}>
+                <Text style={{ color: COLORS.primary, fontWeight: "bold", fontSize: 13 }}>Resend</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </View>
-    </View>
+      <InfoModal 
+        visible={showNetworkModal}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        icon={modalConfig.icon}
+        iconColor={modalConfig.iconColor}
+        onClose={() => setShowNetworkModal(false)}
+      />
+    </Modal>
   );
 };
 

@@ -31,9 +31,10 @@ const DrawerNavigator = () => {
           <Image
             source={require("../../assets/logoapp.png")}
             style={{
-              width: responsiveHeight(25),
-              height: responsiveHeight(25),
+              width: 160,
+              height: 80,
               resizeMode: "contain",
+              alignSelf: "center",
             }}
           />
         ),
@@ -73,22 +74,22 @@ const DrawerNavigator = () => {
             <View>
               {/* User Profile Info */}
               <View style={{ alignItems: 'center', marginBottom: responsiveHeight(2) }}>
-                  <View style={{
-                    width: responsiveHeight(10),
-                    height: responsiveHeight(10),
-                    borderRadius: responsiveHeight(5),
-                    backgroundColor: '#F1F3F4',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginBottom: 10,
-                    borderWidth: 2,
-                    borderColor: '#fff',
-                    ...SHADOWS.light
-                  }}>
-                    <Icon name="account" size={responsiveHeight(6)} color="#ADB5BD" />
-                  </View>
-                  <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#343A40' }}>{user?.name || user?.email?.split('@')[0] || 'User'}</Text>
-                  <Text style={{ fontSize: 12, color: '#6C757D' }}>{user?.user_type === 'doctor' ? 'Medical Professional' : 'Patient'}</Text>
+                <View style={{
+                  width: responsiveHeight(10),
+                  height: responsiveHeight(10),
+                  borderRadius: responsiveHeight(5),
+                  backgroundColor: '#F1F3F4',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom: 10,
+                  borderWidth: 2,
+                  borderColor: '#fff',
+                  ...SHADOWS.light
+                }}>
+                  <Icon name="account" size={responsiveHeight(6)} color="#ADB5BD" />
+                </View>
+                <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#343A40' }}>{user?.name || user?.email?.split('@')[0] || 'User'}</Text>
+                <Text style={{ fontSize: 12, color: '#6C757D' }}>{user?.user_type === 'doctor' ? 'Medical Professional' : 'Patient'}</Text>
               </View>
 
               {/* Divider */}
@@ -164,9 +165,9 @@ const DrawerNavigator = () => {
         );
       }}
     >
-      <Drawer.Screen 
-        name="HomeTabs" 
-        component={MainStack} 
+      <Drawer.Screen
+        name="HomeTabs"
+        component={MainStack}
         options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? "Tabs";
           const noHeaderScreens = ["Chat", "ConsultDoctor", "BookAppointment", "Appointments", "DiagnosisDetail"];

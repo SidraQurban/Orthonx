@@ -12,6 +12,7 @@ import {
   Alert,
   Animated,
   Easing,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -52,7 +53,33 @@ const DiagnosisDetail = ({ route, navigation }) => {
   const [config, setConfig] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: "", message: "", icon: "alert-circle", iconColor: COLORS.danger });
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+  const [reviewNotes, setReviewNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmitReview = async () => {
+    if (!reviewNotes.trim()) {
+      Alert.alert("Warning", "Please enter your clinical opinion notes.");
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      await apiClient.post(`/api/v1/prediction/${id}/submit-review`, {
+        notes: reviewNotes,
+      });
+      Alert.alert("Success", "Review completed successfully!");
+      if (refreshUser) {
+        await refreshUser();
+      }
+      await fetchDetail();
+    } catch (error) {
+      console.error("Submit review error:", error);
+      Alert.alert("Error", error.response?.data?.detail || "Could not submit review.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -93,10 +120,10 @@ const DiagnosisDetail = ({ route, navigation }) => {
           message: `Your balance: ${user?.credits || 0} credits\nRequired: ${config?.request_review_cost || 20} credits\n\nPlease top up your account to continue.`,
           icon: "alert-circle",
           iconColor: COLORS.danger,
-          buttonText: "View Profile",
+          buttonText: "Buy Credits",
           onButtonPress: () => {
             setShowModal(false);
-            navigation.navigate("Profile");
+            navigation.navigate("BuyCredits");
           }
         });
         setShowModal(true);
@@ -242,46 +269,110 @@ const DiagnosisDetail = ({ route, navigation }) => {
 
           {/* Review Section */}
           <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Professional Opinion</Text>
-          {(!record.review_status || record.review_status === 'none') ? (
-            <View style={styles.reviewPromptBox}>
-              <View style={styles.reviewInfoRow}>
-                <View style={styles.stethoscopeIcon}>
-                   <MaterialCommunityIcons name="stethoscope" size={24} color={COLORS.primary} />
+          {user?.user_type === "doctor" ? (
+            record.review_status === "pending" ? (
+              <View style={[styles.reviewPromptBox, { borderColor: "#FDBA74" }]}>
+                <View style={[styles.reviewInfoRow, { marginBottom: 15 }]}>
+                  <View style={[styles.stethoscopeIcon, { backgroundColor: "#FFEDD5" }]}>
+                    <Feather name="edit-3" size={24} color="#D97706" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.reviewPromptTitle}>Submit Clinical Opinion</Text>
+                    <Text style={styles.reviewPromptSub}>This scan has been referred to you. Add clinical notes for the patient below.</Text>
+                  </View>
                 </View>
-                <View style={{ flex: 1 }}>
-                   <Text style={styles.reviewPromptTitle}>Expert Verification</Text>
-                   <Text style={styles.reviewPromptSub}>Get a certified orthopedic surgeon to review this scan.</Text>
+                <TextInput
+                  value={reviewNotes}
+                  onChangeText={setReviewNotes}
+                  placeholder="Type your notes, recommendations, or findings here..."
+                  placeholderTextColor={COLORS.gray}
+                  multiline
+                  style={{
+                    backgroundColor: COLORS.white,
+                    borderWidth: 1.5,
+                    borderColor: COLORS.border,
+                    borderRadius: 12,
+                    padding: 12,
+                    fontSize: 14,
+                    height: 100,
+                    textAlignVertical: "top",
+                    marginBottom: 15,
+                    color: COLORS.text,
+                  }}
+                />
+                <TouchableOpacity
+                  style={[styles.requestReviewBtn, { backgroundColor: "#D97706" }]}
+                  onPress={handleSubmitReview}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <ActivityIndicator color={COLORS.white} />
+                  ) : (
+                    <Text style={styles.requestBtnText}>
+                      Submit Review (+{config?.doctor_review_earning || 20} Credits)
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            ) : record.review_status === "reviewed" ? (
+              <View style={[styles.statusBox, styles.reviewedBox, { backgroundColor: "#EFF6FF", borderColor: "#BFDBFE" }]}>
+                <View style={styles.reviewedHeader}>
+                  <Feather name="check" size={18} color="#1E40AF" />
+                  <Text style={[styles.reviewedTitle, { color: "#1E40AF" }]}>Your Submitted Notes</Text>
+                </View>
+                <Text style={[styles.reviewNotes, { color: "#1E3A8A" }]}>{record.review_notes}</Text>
+              </View>
+            ) : (
+              <View style={[styles.statusBox, { backgroundColor: COLORS.lightGray, borderColor: COLORS.border }]}>
+                <Feather name="info" size={20} color={COLORS.gray} />
+                <View style={{ marginLeft: 15, flex: 1 }}>
+                  <Text style={[styles.statusBoxTitle, { color: COLORS.text }]}>No Review Requested</Text>
+                  <Text style={[styles.statusBoxSub, { color: COLORS.gray }]}>The patient has not requested clinical review for this scan.</Text>
                 </View>
               </View>
-              
-              <TouchableOpacity 
-                style={styles.requestReviewBtn}
-                onPress={handleRequestReview}
-                disabled={isRequesting}
-              >
-                {isRequesting ? (
-                   <ActivityIndicator color={COLORS.white} />
-                ) : (
-                   <Text style={styles.requestBtnText}>Request Review ({config?.request_review_cost || 20} Credits)</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          ) : record.review_status === 'pending' ? (
-            <View style={[styles.statusBox, styles.pendingBox]}>
-              <ClockPulse />
-              <View style={{ marginLeft: 15, flex: 1 }}>
-                <Text style={styles.statusBoxTitle}>Review Pending</Text>
-                <Text style={styles.statusBoxSub}>A specialist has been notified and will provide notes shortly.</Text>
-              </View>
-            </View>
+            )
           ) : (
-            <View style={[styles.statusBox, styles.reviewedBox]}>
-              <View style={styles.reviewedHeader}>
-                <Feather name="check-circle" size={18} color="#065F46" />
-                <Text style={styles.reviewedTitle}>Doctor's Clinical Notes</Text>
+            (!record.review_status || record.review_status === 'none') ? (
+              <View style={styles.reviewPromptBox}>
+                <View style={styles.reviewInfoRow}>
+                  <View style={styles.stethoscopeIcon}>
+                     <MaterialCommunityIcons name="stethoscope" size={24} color={COLORS.primary} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                     <Text style={styles.reviewPromptTitle}>Expert Verification</Text>
+                     <Text style={styles.reviewPromptSub}>Get a certified orthopedic surgeon to review this scan.</Text>
+                  </View>
+                </View>
+                
+                <TouchableOpacity 
+                  style={styles.requestReviewBtn}
+                  onPress={handleRequestReview}
+                  disabled={isRequesting}
+                >
+                  {isRequesting ? (
+                     <ActivityIndicator color={COLORS.white} />
+                  ) : (
+                     <Text style={styles.requestBtnText}>Request Review ({config?.request_review_cost || 20} Credits)</Text>
+                  )}
+                </TouchableOpacity>
               </View>
-              <Text style={styles.reviewNotes}>{record.review_notes}</Text>
-            </View>
+            ) : record.review_status === 'pending' ? (
+              <View style={[styles.statusBox, styles.pendingBox]}>
+                <ClockPulse />
+                <View style={{ marginLeft: 15, flex: 1 }}>
+                  <Text style={styles.statusBoxTitle}>Review Pending</Text>
+                  <Text style={styles.statusBoxSub}>A specialist has been notified and will provide notes shortly.</Text>
+                </View>
+              </View>
+            ) : (
+              <View style={[styles.statusBox, styles.reviewedBox]}>
+                <View style={styles.reviewedHeader}>
+                  <Feather name="check-circle" size={18} color="#065F46" />
+                  <Text style={styles.reviewedTitle}>Doctor's Clinical Notes</Text>
+                </View>
+                <Text style={styles.reviewNotes}>{record.review_notes}</Text>
+              </View>
+            )
           )}
 
           {record.report_url && (

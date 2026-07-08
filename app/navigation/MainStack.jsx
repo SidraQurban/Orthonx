@@ -7,6 +7,7 @@ import DiagnosisDetail from "../screens/DiagnosisDetail";
 import BookAppointment from "../screens/BookAppointment";
 import AppointmentsScreen from "../screens/AppointmentsScreen";
 import WorklistScreen from "../screens/WorklistScreen";
+import BuyCreditsScreen from "../screens/BuyCreditsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const MainStack = () => {
       <Stack.Screen name="Appointments" component={AppointmentsScreen} />
       <Stack.Screen name="BookAppointment" component={BookAppointment} />
       <Stack.Screen name="Worklist" component={WorklistScreen} />
+      <Stack.Screen name="BuyCredits" component={BuyCreditsScreen} />
     </Stack.Navigator>
   );
 };

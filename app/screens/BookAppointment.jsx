@@ -84,10 +84,10 @@ const BookAppointment = ({ route, navigation }) => {
           message: `Your balance: ${user?.credits || 0} credits\nRequired: ${config?.appointment_booking_cost || 0} credits\n\nPlease top up your account to continue.`,
           icon: "alert-circle",
           iconColor: COLORS.danger,
-          buttonText: "View Profile",
+          buttonText: "Buy Credits",
           onButtonPress: () => {
             setShowModal(false);
-            navigation.navigate("Profile");
+            navigation.navigate("BuyCredits");
           }
         });
         setShowModal(true);

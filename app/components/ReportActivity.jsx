@@ -15,7 +15,7 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import { useNavigation } from "@react-navigation/native";
-import apiClient, { API_URL } from "../api/apiClient";
+import apiClient from "../api/apiClient";
 
 const ReportActivity = () => {
   const navigation = useNavigation();
@@ -47,7 +47,13 @@ const ReportActivity = () => {
         <View style={styles.row}>
           {/* Left Image */}
           <Image 
-            source={item.result_image_url ? { uri: item.result_image_url.startsWith('http') ? item.result_image_url : `${API_URL}${item.result_image_url.startsWith('/') ? '' : '/'}${item.result_image_url}` } : require("../../assets/orthlogo.png")} 
+            source={
+              item.uploaded_image_url
+                ? { uri: item.uploaded_image_url }
+                : item.result_image_url
+                ? { uri: item.result_image_url }
+                : require("../../assets/orthlogo.png")
+            } 
             style={styles.image} 
           />
 

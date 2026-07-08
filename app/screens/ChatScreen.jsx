@@ -53,46 +53,46 @@ const ChatScreen = ({ navigation }) => {
       };
 
       socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "message" || data.type === "chunk") {
-        // Simple logic: if chunk, update last bot message or add new one
-        setMessages((prev) => {
-          const lastMsg = prev[prev.length - 1];
-          // If the last message is already a streaming message from the bot, append text
-          if (lastMsg && !lastMsg.isUser && lastMsg.id === "streaming") {
-            const updatedMessages = [...prev];
-            updatedMessages[updatedMessages.length - 1] = { 
-              ...lastMsg, 
-              text: lastMsg.text + (data.text || "") 
-            };
-            return updatedMessages;
+        const data = JSON.parse(event.data);
+        if (data.type === "message" || data.type === "chunk") {
+          // Simple logic: if chunk, update last bot message or add new one
+          setMessages((prev) => {
+            const lastMsg = prev[prev.length - 1];
+            // If the last message is already a streaming message from the bot, append text
+            if (lastMsg && !lastMsg.isUser && lastMsg.id === "streaming") {
+              const updatedMessages = [...prev];
+              updatedMessages[updatedMessages.length - 1] = {
+                ...lastMsg,
+                text: lastMsg.text + (data.text || "")
+              };
+              return updatedMessages;
+            }
+            // Otherwise, start a new streaming message
+            return [...prev, { id: "streaming", text: data.text || "", isUser: false }];
+          });
+          // We do NOT set isTyping(false) here, only on 'done'
+        } else if (data.type === "done") {
+          setMessages((prev) => {
+            const lastMsg = prev[prev.length - 1];
+            if (lastMsg && lastMsg.id === "streaming") {
+              const finalMessages = [...prev];
+              finalMessages[finalMessages.length - 1] = {
+                ...lastMsg,
+                id: `bot-${Date.now()}`
+              };
+              return finalMessages;
+            }
+            return prev;
+          });
+          setIsTyping(false);
+        } else if (data.type === "error") {
+          setIsTyping(false);
+          console.error("Chat error:", data.message);
+          if (data.message?.toLowerCase()?.includes("credit")) {
+            setShowErrorModal(true);
           }
-          // Otherwise, start a new streaming message
-          return [...prev, { id: "streaming", text: data.text || "", isUser: false }];
-        });
-        // We do NOT set isTyping(false) here, only on 'done'
-      } else if (data.type === "done") {
-        setMessages((prev) => {
-          const lastMsg = prev[prev.length - 1];
-          if (lastMsg && lastMsg.id === "streaming") {
-            const finalMessages = [...prev];
-            finalMessages[finalMessages.length - 1] = { 
-              ...lastMsg, 
-              id: `bot-${Date.now()}` 
-            };
-            return finalMessages;
-          }
-          return prev;
-        });
-        setIsTyping(false);
-      } else if (data.type === "error") {
-        setIsTyping(false);
-        console.error("Chat error:", data.message);
-        if (data.message?.toLowerCase()?.includes("credit")) {
-          setShowErrorModal(true);
         }
-      }
-    };
+      };
 
       socket.onclose = () => {
         console.log("Chat disconnected");
@@ -100,8 +100,8 @@ const ChatScreen = ({ navigation }) => {
         // Only reconnect if the user is still on the chat page
         if (isMountedRef.current) {
           reconnectTimeoutRef.current = setTimeout(() => {
-             console.log("Attempting to reconnect chat...");
-             connectSocket();
+            console.log("Attempting to reconnect chat...");
+            connectSocket();
           }, 3000);
         }
       };
@@ -134,17 +134,17 @@ const ChatScreen = ({ navigation }) => {
 
   const renderMessage = ({ item }) => (
     <View style={[
-      styles.messageRow, 
-      { 
+      styles.messageRow,
+      {
         justifyContent: item.isUser ? "flex-end" : "flex-start",
-        alignSelf: item.isUser ? "flex-end" : "flex-start" 
+        alignSelf: item.isUser ? "flex-end" : "flex-start"
       }
     ]}>
       {!item.isUser && (
         <View style={styles.aiAvatar}>
-          <Image 
-            source={require("../../assets/fav_icon.png")} 
-            style={{ width: 22, height: 22, resizeMode: 'contain' }} 
+          <Image
+            source={require("../../assets/logos/logo_widget-removebg.png")}
+            style={{ width: 26, height: 26, resizeMode: 'contain' }}
           />
         </View>
       )}
@@ -154,8 +154,8 @@ const ChatScreen = ({ navigation }) => {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[
-            styles.messageBubble, 
-            { 
+            styles.messageBubble,
+            {
               borderBottomRightRadius: 4,
               borderBottomLeftRadius: 20,
               ...SHADOWS.light
@@ -168,8 +168,8 @@ const ChatScreen = ({ navigation }) => {
         </LinearGradient>
       ) : (
         <View style={[
-          styles.messageBubble, 
-          { 
+          styles.messageBubble,
+          {
             backgroundColor: COLORS.white,
             borderBottomRightRadius: 20,
             borderBottomLeftRadius: 4,
@@ -188,29 +188,35 @@ const ChatScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Floating Back Button & Branding */}
-      <View style={styles.floatingControls}>
-        <TouchableOpacity 
-          style={styles.backButton} 
+      {/* Header Controls */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Feather name="arrow-left" size={22} color={COLORS.text} />
         </TouchableOpacity>
 
         <View style={styles.headerInfo}>
-          <Image 
-            source={require("../../assets/fav_icon.png")} 
-            style={{ width: 26, height: 26, resizeMode: 'contain', marginRight: 6 }} 
+          <Image
+            source={require("../../assets/logos/logo_widget-removebg.png")}
+            style={{ width: 26, height: 26, resizeMode: 'contain', marginRight: 8 }}
           />
-          <Text style={styles.headerTitle}>Orthonx AI</Text>
-          <View style={[styles.onlineDot, { backgroundColor: isConnected ? "#40C057" : "#FF6B6B" }]} />
+          <View>
+            <Text style={styles.headerTitle}>Orthonx AI</Text>
+            <View style={styles.statusRow}>
+              <View style={[styles.onlineDot, { backgroundColor: isConnected ? "#40C057" : "#FF6B6B" }]} />
+              <Text style={styles.statusText}>{isConnected ? "Active" : "Offline"}</Text>
+            </View>
+          </View>
         </View>
+        <View style={{ width: 42 }} />
       </View>
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+        keyboardVerticalOffset={0}
       >
         <FlatList
           ref={flatListRef}
@@ -240,8 +246,8 @@ const ChatScreen = ({ navigation }) => {
               onChangeText={setInput}
               multiline
             />
-            <TouchableOpacity 
-              onPress={handleSend} 
+            <TouchableOpacity
+              onPress={handleSend}
               disabled={!input.trim() || !isConnected || isTyping}
               style={{ paddingBottom: 5 }}
             >
@@ -255,17 +261,17 @@ const ChatScreen = ({ navigation }) => {
           </View>
         </View>
       </KeyboardAvoidingView>
-      <InfoModal 
-        visible={showErrorModal} 
+      <InfoModal
+        visible={showErrorModal}
         onClose={() => setShowErrorModal(false)}
         title={!isConnected ? "Connection Lost" : "Insufficient Credits"}
         message={!isConnected ? "Could not connect to the Orthonx AI. Please check your network or server settings." : "You don't have enough credits to chat with the AI. Please check your profile."}
         icon={!isConnected ? "wifi-off" : "alert-circle"}
         iconColor={!isConnected ? COLORS.gray : COLORS.danger}
-        buttonText="View Profile"
+        buttonText="Buy Credits"
         onButtonPress={() => {
           setShowErrorModal(false);
-          navigation.navigate("Profile");
+          navigation.navigate("BuyCredits");
         }}
       />
     </SafeAreaView>
@@ -277,15 +283,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  floatingControls: {
-    position: "absolute",
-    top: Platform.OS === 'ios' ? 50 : 20,
-    left: 15,
-    right: 15,
+  header: {
     flexDirection: "row",
     alignItems: "center",
-    zIndex: 1000,
+    backgroundColor: COLORS.white,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+    ...SHADOWS.light,
   },
   backButton: {
     width: 42,
@@ -294,35 +301,36 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     justifyContent: "center",
     alignItems: "center",
-    ...SHADOWS.light,
     borderWidth: 1,
     borderColor: COLORS.lightGray,
   },
   headerInfo: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    ...SHADOWS.light,
-    borderWidth: 1,
-    borderColor: COLORS.lightGray,
   },
   headerTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "bold",
     color: COLORS.text,
-    marginRight: 6,
+  },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 2,
   },
   onlineDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  statusText: {
+    fontSize: 11,
+    color: COLORS.gray,
+    fontWeight: "600",
   },
   chatList: {
     padding: 15,
-    paddingTop: 80, // Leave space for floating header
     paddingBottom: 40,
   },
   messageRow: {
@@ -366,8 +374,9 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   inputContainer: {
-    padding: 15,
-    paddingBottom: Platform.OS === "ios" ? 25 : 15,
+    paddingHorizontal: 15,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === "ios" ? 20 : 12,
     backgroundColor: COLORS.white,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,

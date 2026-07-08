@@ -38,9 +38,10 @@ const LoginScreen = ({ navigation }) => {
           <Image
             source={require("../../assets/logoapp.png")}
             style={{
-              height: responsiveHeight(15),
-              width: responsiveHeight(30),
-              resizeMode: "cover",
+              height: 70,
+              width: 200,
+              resizeMode: "contain",
+              marginTop: responsiveHeight(4),
             }}
           />
         </View>

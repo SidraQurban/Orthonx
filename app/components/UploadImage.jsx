@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Alert,
   StyleSheet,
+  Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Feather } from "@expo/vector-icons";
@@ -24,6 +25,7 @@ const UploadImage = () => {
   const [result, setResult] = useState(null);
   const [statusText, setStatusText] = useState("AI is analyzing your scan...");
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [selectedImageTab, setSelectedImageTab] = useState("result");
 
   const pickImage = async () => {
     // Request permissions explicitly
@@ -85,11 +87,29 @@ const UploadImage = () => {
     setStatusText("Uploading task...");
 
     const formData = new FormData();
-    formData.append("file", {
-      uri: image,
-      name: "xray.jpg",
-      type: "image/jpeg",
-    });
+
+    if (Platform.OS === "web") {
+      // On web, the URI is a blob: or data: URL — fetch it as a Blob
+      // and wrap it in a File so the browser builds a proper multipart body.
+      try {
+        const fetchRes = await fetch(image);
+        const blob = await fetchRes.blob();
+        const file = new File([blob], "xray.jpg", { type: blob.type || "image/jpeg" });
+        formData.append("file", file);
+      } catch (blobErr) {
+        setLoading(false);
+        console.error("Failed to read image as blob:", blobErr);
+        Alert.alert("Error", "Could not prepare the image for upload.");
+        return;
+      }
+    } else {
+      // Native (iOS / Android) — React Native's FormData accepts the {uri} object.
+      formData.append("file", {
+        uri: image,
+        name: "xray.jpg",
+        type: "image/jpeg",
+      });
+    }
 
     try {
       const response = await apiClient.post("/api/v1/yolo/detection/detect", formData, {
@@ -164,23 +184,68 @@ const UploadImage = () => {
                 </View>
               </View>
 
-              <Text style={styles.reportSubtitle}>Grad-CAM Heatmap Visualization</Text>
-              <Image 
-                source={result.result_image ? { uri: result.result_image.startsWith('http') ? result.result_image : `${API_URL}${result.result_image.startsWith('/') ? '' : '/'}${result.result_image}` } : require("../../assets/orthlogo.png")} 
-                style={styles.resultImage} 
-              />
+              {/* Image tab selector */}
+              {(() => {
+                const tabs = [
+                  { key: "result", label: "Detection", url: result.result_image },
+                  { key: "uploaded", label: "Original", url: result.uploaded_image },
+                  { key: "explanation", label: "Explained", url: result.explanation_image },
+                  { key: "gradcam", label: "Heatmap", url: result.gradcam_image },
+                ].filter((t) => t.url);
+
+                const activeUrl = tabs.find((t) => t.key === selectedImageTab)?.url || tabs[0]?.url;
+
+                return (
+                  <>
+                    <View style={styles.imageTabs}>
+                      {tabs.map((tab) => (
+                        <TouchableOpacity
+                          key={tab.key}
+                          onPress={() => setSelectedImageTab(tab.key)}
+                          style={[
+                            styles.imageTab,
+                            selectedImageTab === tab.key && styles.activeTab,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.tabText,
+                              selectedImageTab === tab.key && styles.activeTabText,
+                            ]}
+                          >
+                            {tab.label}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                    {activeUrl ? (
+                      <Image
+                        source={{ uri: activeUrl }}
+                        style={styles.resultImage}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <Image
+                        source={require("../../assets/orthlogo.png")}
+                        style={styles.resultImage}
+                        resizeMode="contain"
+                      />
+                    )}
+                  </>
+                );
+              })()}
 
               <View style={styles.summaryBox}>
                 <Text style={styles.summaryTitle}>AI Summary</Text>
                 <Text style={styles.summaryText}>
-                  {result.detections?.length > 0 
+                  {result.detections?.length > 0
                     ? `Fracture detected with ${Math.round(result.detections[0].confidence * 100)}% confidence. The heatmap highlights the affected region.`
                     : "No fractures detected. Please consult a specialist for confirmation."
                   }
                 </Text>
               </View>
 
-              <TouchableOpacity onPress={() => setImage(null)} style={styles.restartBtn}>
+              <TouchableOpacity onPress={() => { setImage(null); setResult(null); setSelectedImageTab("result"); }} style={styles.restartBtn}>
                 <Text style={{ color: COLORS.primary, fontWeight: "bold" }}>Upload New Scan</Text>
               </TouchableOpacity>
             </View>
@@ -192,10 +257,10 @@ const UploadImage = () => {
         onClose={() => setShowErrorModal(false)}
         title="Insufficient Credits"
         message={`Your balance: ${user?.credits || 0} credits\nRequired: 10 credits\n\nPlease top up your account to continue.`}
-        buttonText="View Profile"
+        buttonText="Buy Credits"
         onButtonPress={() => {
           setShowErrorModal(false);
-          navigation.navigate("Profile");
+          navigation.navigate("BuyCredits");
         }}
       />
     </View>
@@ -302,6 +367,22 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1,
   },
+  imageTabs: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+  imageTab: {
+    flex: 1,
+    marginHorizontal: 3,
+    paddingVertical: 7,
+    borderRadius: 10,
+    backgroundColor: COLORS.lightGray,
+    alignItems: "center",
+  },
+  activeTab: { backgroundColor: COLORS.primary },
+  tabText: { fontSize: 11, color: COLORS.gray, fontWeight: "600" },
+  activeTabText: { color: COLORS.white },
   resultImage: {
     width: "100%",
     height: 250,

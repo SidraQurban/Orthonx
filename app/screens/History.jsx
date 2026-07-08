@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import apiClient, { API_URL } from "../api/apiClient";
+import apiClient from "../api/apiClient";
 import { COLORS, SIZES, SHADOWS } from "../constants/Theme";
 
 const History = ({ navigation }) => {
@@ -51,9 +51,15 @@ const History = ({ navigation }) => {
         onPress={() => navigation.navigate("DiagnosisDetail", { id: item.id })}
       >
         <View style={styles.row}>
-          <Image 
-            source={item.result_image_url ? { uri: item.result_image_url.startsWith('http') ? item.result_image_url : `${API_URL}${item.result_image_url.startsWith('/') ? '' : '/'}${item.result_image_url}` } : require("../../assets/orthlogo.png")} 
-            style={styles.image} 
+          <Image
+            source={
+              item.uploaded_image_url
+                ? { uri: item.uploaded_image_url }
+                : item.result_image_url
+                ? { uri: item.result_image_url }
+                : require("../../assets/orthlogo.png")
+            }
+            style={styles.image}
           />
           <View style={styles.textContainer}>
             <Text style={styles.title}>{isDetected ? "Fracture Detected" : "No Fracture Found"}</Text>

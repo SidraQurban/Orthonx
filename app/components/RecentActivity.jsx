@@ -11,7 +11,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { COLORS, SHADOWS, SIZES } from "../constants/Theme";
-import apiClient, { API_URL } from "../api/apiClient";
+import apiClient from "../api/apiClient";
 
 const RecentActivty = () => {
   const navigation = useNavigation();
@@ -44,7 +44,13 @@ const RecentActivty = () => {
         <View style={styles.row}>
           <View style={styles.imageContainer}>
             <Image 
-              source={item.result_image_url ? { uri: item.result_image_url.startsWith('http') ? item.result_image_url : `${API_URL}${item.result_image_url.startsWith('/') ? '' : '/'}${item.result_image_url}` } : require("../../assets/orthlogo.png")} 
+              source={
+                item.uploaded_image_url
+                  ? { uri: item.uploaded_image_url }
+                  : item.result_image_url
+                  ? { uri: item.result_image_url }
+                  : require("../../assets/orthlogo.png")
+              } 
               style={styles.image} 
             />
           </View>

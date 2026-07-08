@@ -73,6 +73,15 @@ const Profile = ({ navigation }) => {
               <Text style={styles.statNumber}>{user?.credits || "0"}</Text>
               <Text style={styles.statLabel}>Credits</Text>
             </View>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate("BuyCredits")}
+              style={[styles.statItem, { backgroundColor: '#F0FFF4', borderRadius: 10, paddingVertical: 10, borderWidth: 1, borderColor: '#C6F6D5', justifyContent: 'center' }]}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Feather name="plus-circle" size={16} color={COLORS.success} style={{ marginRight: 6 }} />
+                <Text style={{ fontSize: 13, fontWeight: "bold", color: COLORS.success }}>Top Up</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 

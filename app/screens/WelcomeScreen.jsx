@@ -10,6 +10,10 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, SIZES, SHADOWS, GRADIENTS } from "../constants/Theme";
+import {
+  responsiveWidth,
+  responsiveHeight,
+} from "react-native-responsive-dimensions";
 
 const { width, height } = Dimensions.get("window");
 
@@ -20,34 +24,70 @@ const WelcomeScreen = ({ navigation }) => {
         source={require("../../assets/bgimg.png")}
         style={{ width, height, flex: 1 }}
       >
-        <View style={{ flex: 1, paddingHorizontal: SIZES.padding, justifyContent: 'space-between', paddingBottom: 50 }}>
-          
-          <View style={{ marginTop: 80, alignItems: 'center' }}>
-            <Image 
-              source={require("../../assets/logoapp.png")} 
-              style={{ width: width * 0.7, height: 120, resizeMode: 'contain' }} 
+        <View
+          style={{
+            flex: 1,
+            paddingHorizontal: SIZES.padding,
+            justifyContent: "space-between",
+            paddingBottom: 50,
+          }}
+        >
+          <View
+            style={{ marginTop: responsiveHeight(10), alignItems: "center" }}
+          >
+            <Image
+              source={require("../../assets/wldoc.png")}
+              style={{
+                width: responsiveWidth(70),
+                height: responsiveHeight(30),
+                resizeMode: "contain",
+              }}
             />
-            <Text style={{ 
-              fontSize: SIZES.h1, 
-              fontWeight: '800', 
-              color: COLORS.primary, 
-              marginTop: 20,
-              textAlign: 'center' 
-            }}>
-              Orthonx AI
+            <Text
+              style={{
+                fontSize: SIZES.h1,
+                fontWeight: "800",
+                color: COLORS.primary,
+                marginTop: 20,
+                textAlign: "center",
+              }}
+            >
+              Welcome to
             </Text>
-            <Text style={{ 
-              fontSize: SIZES.body, 
-              color: COLORS.gray, 
-              textAlign: 'center', 
-              marginTop: 10,
-              paddingHorizontal: 20
-            }}>
-              Advancing Orthopedic Care through Intelligent Fracture Detection
+            <Image
+              source={require("../../assets/logoapp.png")}
+              style={{
+                width: width * 0.7,
+                height: 120,
+                resizeMode: "contain",
+                bottom: responsiveHeight(4),
+              }}
+            />
+            <Text
+              style={{
+                fontSize: SIZES.body,
+                color: COLORS.gray,
+                textAlign: "center",
+                bottom: responsiveHeight(4),
+                paddingHorizontal: 20,
+              }}
+            >
+              AI-powered X-ray fracture detection
+            </Text>
+            <Text
+              style={{
+                fontSize: SIZES.body,
+                color: COLORS.gray,
+                textAlign: "center",
+                bottom: responsiveHeight(4),
+                paddingHorizontal: 20,
+              }}
+            >
+              at your fingertips.
             </Text>
           </View>
 
-          <View style={{ width: '100%' }}>
+          <View style={{ width: "100%" }}>
             <TouchableOpacity
               onPress={() => navigation.navigate("Role")}
               activeOpacity={0.8}
@@ -63,22 +103,28 @@ const WelcomeScreen = ({ navigation }) => {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ color: COLORS.white, fontSize: 18, fontWeight: "bold" }}>
+                <Text
+                  style={{
+                    color: COLORS.white,
+                    fontSize: 18,
+                    fontWeight: "bold",
+                  }}
+                >
                   Get Started
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => navigation.navigate("Login")}
-              style={{ marginTop: 20, alignItems: 'center' }}
+              style={{ marginTop: 20, alignItems: "center" }}
             >
-              <Text style={{ color: COLORS.primary, fontWeight: '600' }}>
-                Already have an account? <Text style={{ textDecorationLine: 'underline' }}>Sign In</Text>
+              <Text style={{ color: COLORS.primary, fontWeight: "600" }}>
+                Already have an account?{" "}
+                <Text style={{ textDecorationLine: "underline" }}>Sign In</Text>
               </Text>
             </TouchableOpacity>
           </View>
-
         </View>
       </ImageBackground>
     </SafeAreaView>

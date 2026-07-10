@@ -51,9 +51,9 @@ const LoginScreen = ({ navigation }) => {
             setModalVisible(false);
             if (navigation.canGoBack()) {
               navigation.goBack();
-            } else {
-              navigation.navigate("Welcome");
             }
+            // After login, AuthContext sets the token and AppNavigation
+            // automatically switches to HomeDrawer — no manual navigate needed.
           }}
           onSignUpPress={() => {
             setModalVisible(false);

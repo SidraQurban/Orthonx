@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/HomeScreen";
 import MyDiagnosis from "../screens/MyDiagnosis";
@@ -23,9 +24,12 @@ const TAB_BAR_HEIGHT = responsiveHeight(10);
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
+  const bottomPad = insets.bottom > 0 ? insets.bottom : Platform.OS === "android" ? 16 : 0;
+
   return (
     <View style={styles.tabBarContainer}>
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { paddingBottom: bottomPad }]}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
@@ -147,11 +151,10 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: "row",
-    height: TAB_BAR_HEIGHT,
+    minHeight: TAB_BAR_HEIGHT,
     alignItems: "center",
     justifyContent: "space-around",
     paddingHorizontal: responsiveWidth(2),
-    paddingBottom: Platform.OS === "ios" ? responsiveHeight(2) : 0,
   },
   tabItem: {
     flex: 1,

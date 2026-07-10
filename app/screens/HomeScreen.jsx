@@ -29,10 +29,6 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.greeting}>Good Morning,</Text>
         <Text style={styles.userName}>{user?.name?.split(' ')[0] || user?.email?.split('@')[0] || "User"}</Text>
       </View>
-      <TouchableOpacity style={styles.notificationBtn}>
-        <Feather name="bell" size={22} color={COLORS.text} />
-        <View style={styles.dot} />
-      </TouchableOpacity>
     </View>
   );
 
@@ -74,7 +70,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: SIZES.padding,
-    paddingTop: 20,
+    paddingTop: 5,
     paddingBottom: 10,
   },
   greeting: {
@@ -94,17 +90,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     ...SHADOWS.light,
-  },
-  dot: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.danger,
-    borderWidth: 2,
-    borderColor: COLORS.white,
   },
 });
 

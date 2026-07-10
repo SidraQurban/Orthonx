@@ -72,18 +72,7 @@ const WelcomeScreen = ({ navigation }) => {
                 paddingHorizontal: 20,
               }}
             >
-              AI-powered X-ray fracture detection
-            </Text>
-            <Text
-              style={{
-                fontSize: SIZES.body,
-                color: COLORS.gray,
-                textAlign: "center",
-                bottom: responsiveHeight(4),
-                paddingHorizontal: 20,
-              }}
-            >
-              at your fingertips.
+              AI-powered X-ray fracture detection {"\n"} at your fingertips.
             </Text>
           </View>
 

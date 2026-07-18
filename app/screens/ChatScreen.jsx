@@ -40,7 +40,8 @@ const ChatScreen = ({ navigation }) => {
       // Don't reconnect if already connected
       if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) return;
 
-      const wsUrl = `${WS_URL}/api/v1/chat/ws?token=${token}`;
+      const wsUrl = `${WS_URL}/ws`;
+
       const socket = new WebSocket(wsUrl);
 
       socket.onopen = () => {
@@ -53,46 +54,58 @@ const ChatScreen = ({ navigation }) => {
       };
 
       socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === "message" || data.type === "chunk") {
-          // Simple logic: if chunk, update last bot message or add new one
-          setMessages((prev) => {
-            const lastMsg = prev[prev.length - 1];
-            // If the last message is already a streaming message from the bot, append text
-            if (lastMsg && !lastMsg.isUser && lastMsg.id === "streaming") {
-              const updatedMessages = [...prev];
-              updatedMessages[updatedMessages.length - 1] = {
-                ...lastMsg,
-                text: lastMsg.text + (data.text || "")
-              };
-              return updatedMessages;
-            }
-            // Otherwise, start a new streaming message
-            return [...prev, { id: "streaming", text: data.text || "", isUser: false }];
-          });
-          // We do NOT set isTyping(false) here, only on 'done'
-        } else if (data.type === "done") {
-          setMessages((prev) => {
-            const lastMsg = prev[prev.length - 1];
-            if (lastMsg && lastMsg.id === "streaming") {
-              const finalMessages = [...prev];
-              finalMessages[finalMessages.length - 1] = {
-                ...lastMsg,
-                id: `bot-${Date.now()}`
-              };
-              return finalMessages;
-            }
-            return prev;
-          });
-          setIsTyping(false);
-        } else if (data.type === "error") {
-          setIsTyping(false);
-          console.error("Chat error:", data.message);
-          if (data.message?.toLowerCase()?.includes("credit")) {
-            setShowErrorModal(true);
-          }
+        let parsed = null;
+        try {
+          parsed = JSON.parse(event.data);
+        } catch {
+          // Not JSON — treat as raw text token
         }
+
+        // Handle typed control frames: {"type":"start"}, {"type":"done"}, {"type":"error"}
+        if (parsed && typeof parsed === "object" && parsed.type) {
+          if (parsed.type === "done") {
+            setMessages((prev) => {
+              const lastMsg = prev[prev.length - 1];
+              if (lastMsg && lastMsg.id === "streaming") {
+                const finalMessages = [...prev];
+                finalMessages[finalMessages.length - 1] = {
+                  ...lastMsg,
+                  id: `bot-${Date.now()}`,
+                };
+                return finalMessages;
+              }
+              return prev;
+            });
+            setIsTyping(false);
+          } else if (parsed.type === "error") {
+            setIsTyping(false);
+            console.error("Chat error:", parsed.message);
+            if (parsed.message?.toLowerCase()?.includes("credit")) {
+              setShowErrorModal(true);
+            }
+          }
+          // "start" frame: nothing to do
+          return;
+        }
+
+        // Raw text token — append to the streaming message bubble
+        const token = typeof parsed === "string" ? parsed : event.data;
+        if (!token) return;
+
+        setMessages((prev) => {
+          const lastMsg = prev[prev.length - 1];
+          if (lastMsg && !lastMsg.isUser && lastMsg.id === "streaming") {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              ...lastMsg,
+              text: lastMsg.text + token,
+            };
+            return updated;
+          }
+          return [...prev, { id: "streaming", text: token, isUser: false }];
+        });
       };
+
 
       socket.onclose = () => {
         console.log("Chat disconnected");

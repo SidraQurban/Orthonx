@@ -54,7 +54,7 @@ const Chatbot = () => {
         <Image 
           source={require("../../assets/orthlogo.png")} 
           style={styles.logo} 
-        />
+        />z
       </View>
     </TouchableOpacity>
   );
